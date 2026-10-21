@@ -961,6 +961,18 @@ const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* ---------- state ---------- */
 const KEY = "lumi-garden-v1";
 const FREE = 5;
+// Lifetime free activities are separate from resettable garden data.
+const USES_KEY = "lumi-lifetime-uses-v1";
+let lifetimeUses = 0;
+function readLifetimeUses(){
+  try { return Math.max(0, Number(localStorage.getItem(USES_KEY)) || 0); }
+  catch(e){ return 0; }
+}
+function recordLifetimeUses(n){
+  lifetimeUses = Math.max(lifetimeUses, n);
+  try { localStorage.setItem(USES_KEY, String(lifetimeUses)); } catch(e){}
+}
+
 const PRICE = 249;
 const BLANK = {onboarded:false, emotion:null, time:null, lastActivity:null, journal:[], resets:0, flowers:[], lastCheckin:null,
   premium:false, plan:null, learn:{}, recent:[], pendingPay:null, updatedAt:0};
@@ -968,7 +980,12 @@ let S = JSON.parse(JSON.stringify(BLANK));
 let cloud = null, cloudChain = Promise.resolve(), syncLabel = "On this device";
 
 function localWrite(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function load(){ try{ const raw = localStorage.getItem(KEY); if(raw){ const d = JSON.parse(raw); if(d && typeof d === "object") S = Object.assign({}, BLANK, d); } }catch(e){} }
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw){ const d = JSON.parse(raw); if(d && typeof d === "object") S = Object.assign({}, BLANK, d); } }catch(e){}
+  // Migrate previously completed activities so existing users do not receive a fresh allowance.
+  lifetimeUses = Math.max(readLifetimeUses(), Number(S.resets) || 0);
+  recordLifetimeUses(lifetimeUses);
+}
 function save(){
   S.updatedAt = Date.now();
   localWrite();
@@ -999,7 +1016,7 @@ async function connectCloud(){
   }catch(e){ cloud = null; }
 }
 function planActive(){ return !!S.premium && !(S.plan && S.plan.renews && Date.now() > Date.parse(S.plan.renews)); }
-const gated = () => S.resets >= FREE && !planActive();
+const gated = () => lifetimeUses >= FREE && !planActive();
 
 /* ---------- content: research-backed steps ---------- */
 // Every step cites published research. "lv" is an honest evidence level:
@@ -1486,7 +1503,7 @@ const ENTER = {
     $("#homeGreet").textContent = n > 0 ? "Welcome back." : "Welcome to Lumi's garden.";
     let meta = n > 0 ? `${n} ${n === 1 ? "flower" : "flowers"} growing in your garden.` : "Your first flower is waiting to bloom.";
     if(!planActive()){
-      const left = Math.max(0, FREE - S.resets);
+      const left = Math.max(0, FREE - lifetimeUses);
       meta += left > 0 ? ` ${left} of ${FREE} free sessions left.` : " Your free sessions are used up. Your garden and journal stay yours.";
     }
     $("#homeMeta").textContent = meta;
@@ -1922,7 +1939,7 @@ function renderReceipt(){
 function openProfile(){
   const dlg = $("#profile"), P = S.plan;
   const rows = [
-    ["Plan", planActive() ? "Lumi Garden, one year" : `Free, ${Math.max(0, FREE - S.resets)} of ${FREE} sessions left`]
+    ["Plan", planActive() ? "Lumi Garden, one year" : `Free, ${Math.max(0, FREE - lifetimeUses)} of ${FREE} sessions left`]
   ];
   if(planActive() && P){
     rows.push(["Active until", fmtDate(P.renews)]);
@@ -2038,6 +2055,7 @@ function wire(){
     if($("#checkContinue").disabled) return;
     $("#checkContinue").disabled = true;
     S.resets += 1;
+    recordLifetimeUses(lifetimeUses + 1);
     if(rec){
       S.learn = S.learn || {}; S.recent = S.recent || [];
       S.learn[rec.id] = (S.learn[rec.id] || 0) + ({much:2, little:1, same:-1}[pick.check] || 0);
@@ -2047,7 +2065,7 @@ function wire(){
     save(); go("reward");
   });
   $("#rewardBack").addEventListener("click", () => {
-    if(S.resets >= FREE && !planActive()) openPaywall("after");
+    if(gated()) openPaywall("after");
     else go("home");
   });
 
@@ -2078,7 +2096,14 @@ function wire(){
   $("#resetBtn").addEventListener("click", e => {
     const b = e.currentTarget;
     if(!b.dataset.armed){ b.dataset.armed = "1"; b.textContent = "Tap again to clear everything"; return; }
-    S = JSON.parse(JSON.stringify(BLANK)); save(); dlg.close();
+    // Starting fresh clears personal content, never lifetime usage or paid entitlement.
+    const previousPlan = S.plan;
+    const previousPremium = S.premium;
+    S = JSON.parse(JSON.stringify(BLANK));
+    S.plan = previousPlan;
+    S.premium = previousPremium;
+    recordLifetimeUses(lifetimeUses);
+    save(); dlg.close();
     setLumi(112, 8, 240, true); go("welcome");
   });
 
