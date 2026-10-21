@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lumi</title>
+<title>Lumi: one small step when your mind gets loud</title>
+<meta name="description" content="Lumi is a gentle wellness companion. Tell her how you feel and how much time you have, and she lights one small, research-backed step forward.">
+<meta property="og:title" content="Lumi: one small step when your mind gets loud">
+<meta property="og:description" content="Tell Lumi how you feel. She lights one small, research-backed step forward.">
+<meta property="og:url" content="https://meetlumi.in/">
+<link rel="canonical" href="https://meetlumi.in/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -408,7 +413,36 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 .dlg-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .dlg-actions .btn{width:100%}
 
+/* own words */
+.own-words{width:min(860px,100%);display:flex;flex-direction:column;gap:8px;text-align:left;margin:-6px 0 22px}
+.own-words textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--line);border-radius:20px;padding:14px 18px;font:inherit;font-size:17px;line-height:1.5;color:var(--ink);background:var(--card);box-shadow:var(--shadow)}
+.own-words textarea:focus{outline:2px solid var(--moss);outline-offset:1px}
+.own-words .tiny{font-size:13px;color:var(--ink-soft)}
+/* evidence */
+.evidence{margin-top:6px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.ev-head{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--ink)}
+.ev-level{font-size:12px;font-weight:600;letter-spacing:.03em;padding:3px 10px;border-radius:999px;background:color-mix(in srgb, var(--moss) 22%, transparent);color:var(--ink)}
+.ev-level[data-lv="Emerging"]{background:color-mix(in srgb, var(--peach) 45%, transparent)}
+.ev-text{font-size:15px;line-height:1.5;color:var(--ink-soft)}
+.ev-cite{font-size:13px;color:var(--ink-soft)}
+.ev-cite a{color:var(--ink);text-underline-offset:3px}
+.rec-why{font-size:13.5px;color:var(--ink-soft)}
+.rec-card .space-tag,.meadow-card .space-tag,.journal .space-tag{align-self:flex-start}
+/* crisis */
+.crisis-card{width:min(600px,100%);text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px 44px}
+.crisis-card a.btn{text-decoration:none;display:inline-block}
+.crisis-lines{display:flex;flex-direction:column;align-items:center;gap:10px}
+/* policy links */
+.policy-links{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}
+.policy-links a{color:var(--ink-soft);text-underline-offset:3px}
+.home-foot{position:absolute;left:9vw;bottom:calc(env(safe-area-inset-bottom,0px) + 22px)}
+#clNext{margin-top:4px}
+.paid-manual{font-size:14px;color:var(--ink-soft)}
+.paid-manual summary{cursor:pointer;margin-bottom:10px}
+.paid-manual .btn{margin-top:10px}
+
 @media (max-width:820px){
+  .home-foot{position:static;margin-top:30px}
   .checkout{grid-template-columns:1fr}
   .row2{grid-template-columns:1fr}
   body{font-size:16px}
@@ -597,18 +631,26 @@ dialog .note{font-size:14px;margin:16px 0 20px}
     <button class="btn primary" id="startBtn">Get started →</button>
     <p class="whisper">No pressure. We'll take it one step at a time.</p>
   </div>
-  <p class="foot-note">Lumi is a wellness companion, not a substitute for professional mental-health care.</p>
+  <div class="foot-note">
+    <p>Lumi is a wellness companion, not a substitute for professional mental-health care.</p>
+    <nav class="policy-links" aria-label="Policies"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="refunds.html">Refunds</a><a href="shipping.html">Delivery</a><a href="contact.html">Contact</a></nav>
+  </div>
 </section>
 
 <!-- 2 emotion -->
 <section class="screen s-center" id="s-emotion" hidden>
   <h2 tabindex="-1">What does your mind feel like right now?</h2>
-  <p class="sub">Pick whatever feels closest. It doesn't have to be exact.</p>
+  <p class="sub">Pick whatever feels closest, or tell Lumi in your own words.</p>
   <div class="choices four" role="radiogroup" aria-label="How your mind feels">
     <button class="choice" role="radio" aria-checked="false" data-emotion="overthinking"><span class="ic">☁️</span><span class="lbl">I can't stop overthinking</span><span class="hint">Thoughts going round and round</span></button>
     <button class="choice" role="radio" aria-checked="false" data-emotion="anxious"><span class="ic">🫶</span><span class="lbl">I feel anxious</span><span class="hint">Tight, buzzy, on edge</span></button>
     <button class="choice" role="radio" aria-checked="false" data-emotion="heavy"><span class="ic">🌧</span><span class="lbl">Everything feels heavy</span><span class="hint">Low, tired, hard to start</span></button>
     <button class="choice" role="radio" aria-checked="false" data-emotion="restless"><span class="ic">〰️</span><span class="lbl">I feel restless</span><span class="hint">Can't sit still, can't settle</span></button>
+  </div>
+  <div class="own-words">
+    <label for="feelText" class="list-head">Or tell Lumi in your own words</label>
+    <textarea id="feelText" rows="2" maxlength="400" placeholder="Like “I have an exam tomorrow and I can't switch off”"></textarea>
+    <span class="tiny">Lumi reads this on your device to choose a step. It isn't saved.</span>
   </div>
   <div class="actions">
     <button class="btn text" id="emotionBack">Back</button>
@@ -642,13 +684,20 @@ dialog .note{font-size:14px;margin:16px 0 20px}
   <div class="reveal-wrap">
     <h2 tabindex="-1">Here's your next small step.</h2>
     <article class="rec-card veiled" id="recCard" aria-live="polite">
-      <span class="space-tag" id="recSpace">🪷 The Pond</span>
+      <span class="space-tag" id="recSpace"></span>
       <h3 id="recTitle"></h3>
       <div class="rec-body" id="recBody"></div>
       <p class="rec-time" id="recTime"></p>
+      <div class="evidence">
+        <div class="ev-head">✦ Why this helps <span class="ev-level" id="evLevel"></span></div>
+        <p class="ev-text" id="evText"></p>
+        <p class="ev-cite"><span id="evCite"></span> <a id="evLink" href="#" target="_blank" rel="noopener">Find the study ↗</a></p>
+      </div>
+      <p class="rec-why" id="recWhy"></p>
     </article>
     <div class="actions later-in hide" id="revealActions">
       <button class="btn primary" id="startAct">Start with Lumi →</button>
+      <button class="btn ghost" id="anotherRec">Show me something else</button>
       <button class="btn text" id="changeAnswers">Change my answers</button>
     </div>
   </div>
@@ -657,7 +706,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 <!-- 6a pond -->
 <section class="screen s-pond" id="s-pond" hidden>
   <div class="pond-top">
-    <span class="space-tag">🪷 The Pond</span>
+    <span class="space-tag" id="tagB"></span>
     <p class="lumi-line" id="pondCue" tabindex="-1">Put both feet on the floor.</p>
   </div>
   <div id="breathRing" aria-hidden="true"></div>
@@ -677,7 +726,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 <!-- 6b meadow -->
 <section class="screen s-meadow" id="s-meadow" hidden>
   <div class="panel meadow-card">
-    <span class="space-tag">🌿 The Meadow</span>
+    <span class="space-tag" id="tagT"></span>
     <p class="lumi-line" id="meadowIntro">"Let's get out of your head for a little while."</p>
     <h2 id="meadowTitle" tabindex="-1">Take a 10-minute walk.</h2>
     <p class="list-head" id="meadowHead">Your only job is to notice:</p>
@@ -700,8 +749,8 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 <!-- 6c treehouse -->
 <section class="screen s-tree" id="s-tree" hidden>
   <div class="panel journal" id="journalCard">
-    <span class="space-tag">🌳 The Treehouse</span>
-    <p class="lumi-line">"Let's leave the thought somewhere other than your head."</p>
+    <span class="space-tag" id="tagW"></span>
+    <p class="lumi-line" id="writeIntro"></p>
     <div id="jStep1" style="display:flex;flex-direction:column;gap:12px">
       <label for="jText"><h2 id="jPrompt" tabindex="-1" style="font-size:clamp(28px,2.6vw,38px)">What's looping in your mind right now?</h2></label>
       <p class="sub" id="jHint">Write it once, exactly as it sounds.</p>
@@ -717,7 +766,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
     <div id="jStep3" hidden style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
       <p class="lumi-line" id="jReply" tabindex="-1"></p>
       <div id="jYesBox" hidden style="width:100%;display:flex;flex-direction:column;gap:8px">
-        <label for="jStepInput" class="list-head">What's the very first step?</label>
+        <label for="jStepInput" class="list-head" id="jYesLabel">What's the very first step?</label>
         <input id="jStepInput" type="text" placeholder="Something small, like 'send one message'">
       </div>
       <button class="btn primary" id="jClose">Close my journal</button>
@@ -755,16 +804,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
     <button class="btn primary" data-talk>Talk to Lumi →</button>
     <p class="whisper" id="homeMeta"></p>
   </div>
-  <div class="signs-wrap">
-    <p class="whisper">Or wander on your own</p>
-    <div class="signs">
-      <button class="sign" data-space="meadow">🌿 Meadow</button>
-      <button class="sign" data-space="pond">🪷 Pond</button>
-      <button class="sign" data-space="tree">🌳 Treehouse</button>
-      <button class="sign" data-space="clearing">🌼 Clearing</button>
-      <button class="sign" data-space="campfire">☕ Campfire</button>
-    </div>
-  </div>
+  <nav class="policy-links home-foot" aria-label="Policies"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="refunds.html">Refunds</a><a href="shipping.html">Delivery</a><a href="contact.html">Contact</a></nav>
 </section>
 
 <!-- my garden -->
@@ -782,7 +822,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 <section class="screen s-journal" id="s-journal" hidden>
   <div class="jlist-wrap">
     <h2 tabindex="-1">Your journal</h2>
-    <p class="sub">Thoughts you left in the Treehouse. They're kept here, so they don't have to live in your head.</p>
+    <p class="sub">Everything you've written with Lumi. It's kept here on your device, so it doesn't have to live in your head.</p>
     <div class="entries" id="entries"></div>
   </div>
 </section>
@@ -793,37 +833,14 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 </section>
 <!-- clearing -->
 <section class="screen s-clearing" id="s-clearing" hidden>
-  <span class="space-tag">🌼 The Clearing</span>
-  <p class="lumi-line">"Let's come back to right here, one sense at a time."</p>
+  <span class="space-tag" id="tagS"></span>
+  <p class="lumi-line" id="stepsIntro"></p>
   <p id="clStep">Step 1 of 5</p>
   <h2 id="clHead" tabindex="-1">Notice 5 things you can see</h2>
   <p class="sub" id="clSub">Tap a light for each one you find.</p>
   <div class="dots" id="clDots"></div>
+  <button class="btn primary" id="clNext">Next →</button>
   <button class="btn ghost" id="clDone">I'm done</button>
-</section>
-
-<!-- campfire -->
-<section class="screen s-meadow" id="s-campfire" hidden>
-  <div class="panel meadow-card">
-    <span class="space-tag">☕ The Campfire</span>
-    <p class="lumi-line" id="campIntro">"Come sit with me for a bit. Nothing to fix."</p>
-    <h2 id="campTitle" tabindex="-1">Sit by the fire for three minutes.</h2>
-    <p class="list-head" id="campHead">While the fire crackles:</p>
-    <ul class="notice" id="campList"></ul>
-    <div class="timer">
-      <div><div class="timer-num" id="campTime">3:00</div><div class="timer-cap" id="campCap">whenever you're ready</div></div>
-      <svg class="vine" viewBox="0 0 300 44" aria-hidden="true">
-        <path class="bgp" d="M4 26 C 40 8, 70 38, 110 22 S 180 8, 220 24 S 280 32, 296 16"/>
-        <path class="fgp" id="campVine" d="M4 26 C 40 8, 70 38, 110 22 S 180 8, 220 24 S 280 32, 296 16"/>
-        <g id="campLeaves"></g>
-      </svg>
-    </div>
-    <div class="actions">
-      <button class="btn primary" id="campStart">Sit by the fire</button>
-      <button class="btn ghost" id="campDone" hidden>I'm done</button>
-      <button class="btn text sound-toggle" id="soundToggle">🔊 Fire sounds on</button>
-    </div>
-  </div>
 </section>
 
 <!-- checkout -->
@@ -834,11 +851,11 @@ dialog .note{font-size:14px;margin:16px 0 20px}
       <h2 tabindex="-1" style="font-size:clamp(30px,2.8vw,40px)">Keep Lumi with you</h2>
       <ul>
         <li>Unlimited sessions with Lumi</li>
-        <li>All five garden spaces</li>
+        <li>Fresh, research-backed steps every time</li>
         <li>Your journal and flowers, kept safe</li>
       </ul>
       <div class="total"><span>Total today</span><b>₹249</b></div>
-      <p class="whisper">Billed once a year. Renews on <span id="coRenew"></span>. You can turn off renewal any time from your profile.</p>
+      <p class="whisper">One payment for a full year of Lumi, until <span id="coRenew"></span>. Nothing renews automatically. See our <a href="refunds.html">refund policy</a>.</p>
       <button class="btn text" id="coBack" style="align-self:flex-start">← Back</button>
     </div>
     <form class="panel payform" id="payForm" novalidate>
@@ -866,12 +883,39 @@ dialog .note{font-size:14px;margin:16px 0 20px}
       <button class="btn primary paybtn" type="submit">Pay ₹249 →</button>
       <p class="secure">🔒 Demo checkout. No real payment is taken.</p>
     </form>
+    <div class="panel payform" id="rzpPanel" hidden>
+      <h3 style="font-size:28px">Pay securely with Razorpay</h3>
+      <p class="sub">UPI, cards, net banking and wallets. You'll pay on Razorpay's secure page, then come straight back to Lumi.</p>
+      <button class="btn primary paybtn" id="rzpGo" type="button">Pay ₹249 with Razorpay →</button>
+      <details class="paid-manual">
+        <summary>Already paid but Lumi didn't unlock?</summary>
+        <div class="field"><label for="rzpId">Your Razorpay payment ID (from the receipt email)</label><input id="rzpId" placeholder="pay_XXXXXXXXXXXXXX" autocomplete="off"><span class="err" id="rzpIdErr"></span></div>
+        <button class="btn ghost" id="rzpConfirm" type="button">Unlock Lumi</button>
+      </details>
+      <p class="secure">🔒 Payments are processed by Razorpay. Lumi never sees your card or UPI details.</p>
+    </div>
   </div>
 </section>
 
+<!-- (Razorpay panel is inside the checkout grid) -->
 <!-- processing -->
 <section class="screen" id="s-processing" hidden>
   <p class="thinking-line" tabindex="-1">Lighting the way to your garden…</p>
+</section>
+
+<!-- crisis support -->
+<section class="screen s-center" id="s-crisis" hidden>
+  <div class="panel crisis-card">
+    <h2 tabindex="-1">I'm really glad you told me.</h2>
+    <p class="lede">What you wrote sounds really heavy, and you deserve more support than Lumi can give on her own. Please reach out to someone now.</p>
+    <div class="crisis-lines">
+      <a class="btn primary" href="tel:14416">Call Tele-MANAS: 14416</a>
+      <p class="whisper">Free mental-health support from the Government of India, any time of day, in many Indian languages.</p>
+      <a class="btn ghost" href="tel:112">Emergency: 112</a>
+    </div>
+    <p class="sub">You could also message someone you trust and tell them how you're feeling right now.</p>
+    <button class="btn text" id="crisisContinue">I'm safe right now. Continue with Lumi</button>
+  </div>
 </section>
 
 <!-- success -->
@@ -888,6 +932,7 @@ dialog .note{font-size:14px;margin:16px 0 20px}
   <div id="profRows"></div>
   <div class="dlg-actions" id="profActions"></div>
   <p class="note">Lumi is a wellness companion, not a substitute for professional mental-health care.</p>
+  <nav class="policy-links" aria-label="Policies" style="margin:6px 0 10px"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="refunds.html">Refunds</a><a href="contact.html">Contact</a></nav>
   <p class="help">If you're in crisis or thinking about harming yourself, please reach out now. In India you can call Tele-MANAS on 14416, any time, or your local emergency number.</p>
   <div class="actions" style="justify-content:space-between;margin-top:14px">
     <button class="btn text" id="resetBtn">Start fresh</button>
@@ -896,6 +941,15 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 </dialog>
 
 <script>
+/* ============ SETTINGS: edit these two lines ============ */
+const LUMI_CONFIG = {
+  clarityId: "",            // Microsoft Clarity project ID, e.g. "abc123xyz9"
+  razorpayPaymentUrl: ""    // Razorpay Payment Page link, e.g. "https://pages.razorpay.com/meetlumi"
+};
+/* ======================================================== */
+if(LUMI_CONFIG.clarityId){
+  (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",LUMI_CONFIG.clarityId);
+}
 (() => {
 "use strict";
 const $ = s => document.querySelector(s);
@@ -908,7 +962,7 @@ const KEY = "lumi-garden-v1";
 const FREE = 5;
 const PRICE = 249;
 const BLANK = {onboarded:false, emotion:null, time:null, lastActivity:null, journal:[], resets:0, flowers:[], lastCheckin:null,
-  premium:false, plan:null, sound:true, updatedAt:0};
+  premium:false, plan:null, learn:{}, recent:[], pendingPay:null, updatedAt:0};
 let S = JSON.parse(JSON.stringify(BLANK));
 let cloud = null, cloudChain = Promise.resolve(), syncLabel = "On this device";
 
@@ -943,55 +997,248 @@ async function connectCloud(){
     }
   }catch(e){ cloud = null; }
 }
-const gated = () => S.resets >= FREE && !S.premium;
+function planActive(){ return !!S.premium && !(S.plan && S.plan.renews && Date.now() > Date.parse(S.plan.renews)); }
+const gated = () => S.resets >= FREE && !planActive();
 
-/* ---------- content ---------- */
-const SPACE = {pond:"🪷 The Pond", meadow:"🌿 The Meadow", tree:"🌳 The Treehouse", clearing:"🌼 The Clearing", campfire:"☕ The Campfire"};
+/* ---------- content: research-backed steps ---------- */
+// Every step cites published research. "lv" is an honest evidence level:
+// Strong = meta-analysis of many trials; Good = solid trials or reviews; Emerging = early or small studies.
+const SCHOLAR = q => "https://scholar.google.com/scholar?q=" + encodeURIComponent(q);
 const ACK = {
   overthinking:"Okay. Let's slow the loop down together.",
   anxious:"Okay. I'm with you.",
   heavy:"Okay. We'll go gently.",
-  restless:"Okay. Let's give that energy somewhere to go."
+  restless:"Okay. Let's give that energy somewhere to go.",
+  stressed:"Okay. Let's make the moment a little smaller.",
+  sad:"Okay. I'm right here with you.",
+  lonely:"Okay. You're not on your own right now.",
+  angry:"Okay. Let's cool things down first.",
+  tired:"Okay. We'll keep it gentle.",
+  sleep:"Okay. Let's help your mind settle.",
+  selfcritical:"Okay. Let's be a little kinder to you.",
+  procrastinating:"Okay. We'll find the smallest way in.",
+  any:"Thank you for telling me. I'm with you."
 };
-const LISTS = {
-  notice:[["🌿","something green"],["☀️","something warm"],["👂","a sound you hadn't noticed"],["🌸","something beautiful"]],
-  reset:[["💧","Drink a glass of water"],["🪟","Open a window"],["🫧","Splash your face"],["😌","Unclench your jaw"]],
-  comfort:[["☕","Make something warm to hold"],["🪟","Stand by a window"],["🧣","Get cosy: blanket, jumper, socks"],["🎵","Play one soft song"]],
-  fire:[["🧣","Wrap yourself in something soft"],["☕","Hold something warm"],["😌","Let your shoulders drop"],["🔥","Watch the flames for a moment"]],
-  move:[["🙆","Roll your shoulders back, slowly"],["👐","Shake out your hands"],["🦶","Rise onto your toes ten times"],["🌬","Stretch up tall, then let go"]],
-  song:[["🎵","Put on one song you like"],["💃","Move however feels good"],["🙆","Stretch through the last chorus"],["🌬","End with one long breath out"]],
-  brisk:[["🚶","Walk a little faster than usual"],["👀","Look up, not at your phone"],["🙆","Stop halfway and stretch"],["🌬","Notice your breath settling"]]
+const FEEL_WORDS = {
+  overthinking:"overthinking", anxious:"anxiety", heavy:"heaviness", restless:"restlessness", stressed:"stress",
+  sad:"sadness", lonely:"loneliness", angry:"anger", tired:"tiredness", sleep:"trouble sleeping", selfcritical:"self-criticism", procrastinating:"feeling stuck"
 };
-const RECS = {
-  overthinking:{
-    2:{space:"tree", title:"Write the thought down, just once.", lines:["Exactly as it sounds in your head. No fixing it.","Then we'll ask it one small question."], mode:"once", hint:"Write it once, exactly as it sounds."},
-    5:{space:"tree", title:"A short brain dump.", lines:["Tip everything that's looping onto the page.","Messy is fine. Five minutes, then we close the book."], mode:"dump", minutes:5, hint:"Keep going until your head feels a little emptier."},
-    10:{space:"meadow", title:"Take a 10-minute walk.", lines:["The thought can come along, but it doesn't get to drive.","You're not solving anything. You're just noticing."], minutes:10, list:"notice", intro:"Let's get out of your head for a little while."}
-  },
-  anxious:{
-    2:{space:"pond", title:"Follow Lumi's light ✨", lines:["Put both feet on the floor.","Breathe in for 4.<br>Hold for 2.<br>Breathe out for 6.","We'll do five together."], breaths:5, cue:"Put both feet on the floor."},
-    5:{space:"pond", title:"Breathe slowly, then land.", lines:["Eight slow breaths with Lumi: in for 4, hold for 2, out for 6.","Then we'll find five things you can see."], breaths:8, grounding:true, cue:"Feet on the floor. Shoulders soft."},
-    10:{space:"meadow", title:"Take a gentle 10-minute walk.", lines:["Slow is good. There's nowhere to be.","Let your breath find its own pace as you go."], minutes:10, list:"notice", intro:"Come with me for a little while."}
-  },
-  heavy:{
-    2:{space:"meadow", title:"A tiny reset for your body.", lines:["Drink some water. Open a window.","Splash your face. Unclench your jaw.","Even one of these counts."], minutes:2, list:"reset", intro:"Let's start with your body. It's smaller than your thoughts.", head:"Pick any of these. Even one counts:", start:"Start 2 minutes"},
-    5:{space:"campfire", title:"A five-minute comfort reset.", lines:["Make something warm to hold and sit by Lumi's fire.","You don't have to feel better. Just a little softer."], minutes:5, list:"comfort", intro:"We'll go gently. No big moves.", head:"Try one or two of these:", start:"Sit by the fire"},
-    10:{space:"meadow", title:"Change the scenery for 10 minutes.", lines:["Step outside, or into a different room.","New air can make a heavy feeling a little lighter."], minutes:10, list:"notice", intro:"Let's get you somewhere with different air."}
-  },
-  restless:{
-    2:{space:"meadow", title:"Shake it out for two minutes.", lines:["Roll your shoulders. Shake out your hands.","Give the fizzy feeling somewhere to go."], minutes:2, list:"move", intro:"Let's give that energy somewhere to go.", head:"Move through these, any order:", start:"Start 2 minutes"},
-    5:{space:"meadow", title:"A one-song movement break.", lines:["Put on one song you like and move however feels good.","When the song ends, so does the break."], minutes:4, list:"song", intro:"One song. That's all.", head:"While it plays:", start:"Start my song"},
-    10:{space:"meadow", title:"A brisk walk and a stretch.", lines:["Walk a little faster than usual for ten minutes.","Stop halfway and stretch like you've just woken up."], minutes:10, list:"brisk", intro:"Let's use some of that energy up.", head:"Along the way:"}
-  }
+const MOVE_LIST = [["🙆","Roll your shoulders back, slowly"],["👐","Shake out your hands"],["🦶","Rise onto your toes ten times"],["🌬","Stretch up tall, then let go"]];
+const NOTICE_LIST = [["🌿","something green"],["☀️","something warm"],["👂","a sound you hadn't noticed"],["🌸","something beautiful"]];
+const EV = {
+  balban:{lv:"Good", text:"In a month-long randomised trial, five minutes a day of cyclic sighing improved mood and lowered breathing rate more than mindfulness meditation did.", cite:"Balban et al., 2023, Cell Reports Medicine", q:"Brief structured respiration practices enhance mood and reduce physiological arousal"},
+  zaccaro:{lv:"Good", text:"A systematic review found slow breathing, around six breaths a minute, is linked to feeling calmer and less anxious, with signs of a more relaxed nervous system.", cite:"Zaccaro et al., 2018, Frontiers in Human Neuroscience", q:"How Breath-Control Can Change Your Life: A Systematic Review on Psycho-Physiological Correlates of Slow Breathing"},
+  anger:{lv:"Strong", text:"A large review of anger research found that activities that calm the body, like slow breathing and relaxation, reduce anger, while high-energy 'venting' does not.", cite:"Kjærvik & Bushman, 2024, Clinical Psychology Review", q:"A meta-analytic review of anger management activities that increase or decrease arousal"},
+  pmr:{lv:"Strong", text:"A meta-analysis of a decade of trials found relaxation training, including progressive muscle relaxation, meaningfully reduces anxiety.", cite:"Manzoni et al., 2008, BMC Psychiatry", q:"Relaxation training for anxiety: a ten-years systematic review with meta-analysis"},
+  touch:{lv:"Emerging", text:"In a 2021 trial, 20 seconds of soothing touch, even from your own hands, blunted the stress hormone cortisol after a stressful task.", cite:"Dreisoerner et al., 2021, Comprehensive Psychoneuroendocrinology", q:"Self-soothing touch and being hugged reduce cortisol responses to stress"},
+  mindful:{lv:"Good", text:"A meta-analysis found that even brief mindfulness practice, a single session or a few, reduces negative feelings. The effects are modest but real.", cite:"Schumer, Lindsay & Creswell, 2018, Journal of Consulting and Clinical Psychology", q:"Brief mindfulness training for negative affectivity: A systematic review and meta-analysis"},
+  nature:{lv:"Good", text:"In a Stanford study, people who walked in nature brooded less afterwards and showed calmer activity in a brain area linked to rumination than people who walked through a city. That study used a 90-minute walk; shorter walks are less tested, but movement itself reliably lifts mood.", cite:"Bratman et al., 2015, PNAS", q:"Nature experience reduces rumination and subgenual prefrontal cortex activation"},
+  exercise:{lv:"Strong", text:"A meta-analysis found that even short bouts of light aerobic exercise reliably lift energy and good feelings soon afterwards.", cite:"Reed & Ones, 2006, Psychology of Sport and Exercise", q:"The effect of acute aerobic exercise on positive activated affect: A meta-analysis"},
+  yoga:{lv:"Good", text:"A meta-analysis of randomised trials found yoga reduced symptoms of low mood, with moderate-quality evidence.", cite:"Cramer et al., 2013, Depression and Anxiety", q:"Yoga for depression: a systematic review and meta-analysis"},
+  intent:{lv:"Strong", text:"Turning a goal into one concrete 'when, where, what' step, called an implementation intention, had a medium-to-large effect on actually following through across nearly 100 studies.", cite:"Gollwitzer & Sheeran, 2006, Advances in Experimental Social Psychology", q:"Implementation intentions and goal achievement: A meta-analysis of effects and processes"},
+  writing:{lv:"Good", text:"Writing openly about your thoughts and feelings has small but reliable benefits for wellbeing, according to a meta-analysis of more than 100 studies.", cite:"Frattaroli, 2006, Psychological Bulletin", q:"Experimental disclosure and its moderators: a meta-analysis"},
+  postpone:{lv:"Emerging", text:"In a randomised trial, people who postponed their worries to a set 'worry time' each day worried less and felt less anxious than people who didn't.", cite:"McGowan & Behar, 2013, Behavior Modification", q:"A preliminary investigation of stimulus control training for worry: Effects on anxiety and insomnia"},
+  todo:{lv:"Emerging", text:"In a sleep-lab study, people who spent five minutes writing a specific to-do list before bed fell asleep faster than people who wrote about tasks they'd already finished.", cite:"Scullin et al., 2018, Journal of Experimental Psychology: General", q:"The effects of bedtime writing on difficulty falling asleep: A polysomnographic study comparing to-do lists and completed activity lists"},
+  label:{lv:"Good", text:"In brain-imaging studies, putting feelings into words, called affect labelling, calmed activity in the amygdala, the brain's alarm centre.", cite:"Lieberman et al., 2007, Psychological Science", q:"Putting feelings into words: affect labeling disrupts amygdala activity in response to affective stimuli"},
+  distance:{lv:"Good", text:"Across several experiments, talking to yourself by name or as 'you' helped people stay calmer and think more clearly under stress.", cite:"Kross et al., 2014, Journal of Personality and Social Psychology", q:"Self-talk as a regulatory mechanism: How you do it matters"},
+  compassion:{lv:"Strong", text:"A meta-analysis of 27 randomised trials found self-compassion practices reduced self-criticism, rumination, anxiety and low mood.", cite:"Ferrari et al., 2019, Mindfulness", q:"Self-compassion interventions and psychosocial outcomes: a meta-analysis of RCTs"},
+  gratitude:{lv:"Good", text:"In a randomised trial, writing down three good things each evening for a week raised happiness and eased low mood for up to six months.", cite:"Seligman et al., 2005, American Psychologist", q:"Positive psychology progress: empirical validation of interventions"},
+  reachout:{lv:"Good", text:"In experiments, people who sent a short appreciative message underestimated how happy it made the person receiving it, and overestimated how awkward it would feel.", cite:"Kumar & Epley, 2018, Psychological Science", q:"Undervaluing gratitude: Expressers misunderstand the consequences of showing appreciation"},
+  music:{lv:"Strong", text:"A meta-analysis of over 100 randomised trials found music reduced both felt stress and physical stress signs like heart rate and cortisol.", cite:"de Witte et al., 2020, Health Psychology Review", q:"Effects of music interventions on stress-related outcomes: a systematic review and two meta-analyses"},
+  activation:{lv:"Strong", text:"Doing small enjoyable or meaningful things, even when you don't feel like it, is the core of behavioural activation, which a meta-analysis found works as well as cognitive therapy for low mood.", cite:"Cuijpers, van Straten & Warmerdam, 2007, Clinical Psychology Review", q:"Behavioral activation treatments of depression: A meta-analysis"},
+  water:{lv:"Emerging", text:"In a small study, people who usually drank little water felt less tired and more clear-headed after drinking more.", cite:"Pross et al., 2014, PLoS ONE", q:"Effects of changes in water intake on mood of high and low drinkers"},
+  green:{lv:"Emerging", text:"Students who looked at a green roof for just 40 seconds made fewer attention errors afterwards than students who looked at a concrete roof.", cite:"Lee et al., 2015, Journal of Environmental Psychology", q:"40-second green roof views sustain attention: The role of micro-breaks within attention restoration theory"},
+  kindness:{lv:"Good", text:"A meta-analysis found that doing small acts of kindness gives a small-to-medium boost to your own wellbeing.", cite:"Curry et al., 2018, Journal of Experimental Social Psychology", q:"Happy to help? A systematic review and meta-analysis of the effects of performing acts of kindness on the well-being of the actor"},
+  insomnia:{lv:"Strong", text:"Getting up when you can't sleep is part of 'stimulus control', a core piece of CBT for insomnia, which medical guidelines recommend as the first treatment for ongoing sleep problems.", cite:"Qaseem et al., 2016, Annals of Internal Medicine", q:"Management of Chronic Insomnia Disorder in Adults: A Clinical Practice Guideline From the American College of Physicians"}
 };
-const DEFAULTS = {
-  pond:{space:"pond", breaths:5, cue:"Put both feet on the floor."},
-  meadow:{space:"meadow", title:"Take a 5-minute wander.", minutes:5, list:"notice", intro:"Let's get out of your head for a little while."},
-  tree:{space:"tree", mode:"dump", minutes:5, hint:"Write as much or as little as you like."},
-  clearing:{space:"clearing"},
-  campfire:{space:"campfire", title:"Sit by the fire for three minutes.", minutes:3, list:"fire", intro:"Come sit with me for a bit. Nothing to fix.", head:"While the fire crackles:", start:"Sit by the fire"}
+const LIB = [
+  // breathing
+  {id:"sigh", kind:"breath", emoji:"🌬", tag:"Breathing", title:"Cyclic sighing with Lumi", min:2, max:5,
+   lines:["Breathe in through your nose, then sip in a little more air.","Let it all out in one long, slow breath.","We'll do this together for about {m} minutes."],
+   cue:"Sit back. Let your shoulders drop.", phases:[["Breathe in",3,.85],["Sip in a little more",1,1],["Long breath out",6,.55]],
+   feels:["anxious","stressed","restless","any"], ev:EV.balban},
+  {id:"slow", kind:"breath", emoji:"🌬", tag:"Breathing", title:"Slow breathing: in for 4, out for 6", min:2, max:10,
+   lines:["Put both feet on the floor.","Breathe in for 4.<br>Hold for 2.<br>Breathe out for 6.","A longer breath out tells your body it's safe to slow down."],
+   cue:"Put both feet on the floor.", phases:[["Breathe in",4,1],["Hold",2,null],["Breathe out",6,.55]],
+   feels:["anxious","overthinking","stressed","sleep","any"], ev:EV.zaccaro},
+  {id:"cool", kind:"breath", emoji:"🧊", tag:"Cool down", title:"Cool the fire before you reply", min:2, max:5,
+   lines:["Anger speeds the body up. Calm it down first, decide later.","Put the phone down for a moment. You don't have to respond yet.","Slow breaths with Lumi, then come back to it."],
+   cue:"You don't have to respond yet.", phases:[["Breathe in",4,1],["Breathe out slowly",6,.55]],
+   feels:["angry"], ev:EV.anger},
+  // body
+  {id:"pmr", kind:"steps", emoji:"💆", tag:"Relaxation", title:"Tense and release, head to toe", min:5, max:5,
+   lines:["Tense one part of your body for five seconds, then let it go.","It's called progressive muscle relaxation, and it teaches your body what 'relaxed' feels like."],
+   intro:"Tense for five seconds, then let go completely.",
+   steps:[["✊ Hands","Make tight fists for five seconds. Then let go and notice the difference."],["🙆 Shoulders","Lift them up to your ears for five seconds. Then drop them."],["😬 Face","Scrunch your whole face for five seconds. Then soften everything."],["🦵 Legs","Press your feet into the floor for five seconds. Then release."],["🌬 Whole body","One long breath out. Let your whole body feel heavy."]],
+   feels:["anxious","stressed","sleep","restless","tired"], ev:EV.pmr},
+  {id:"touch", kind:"steps", emoji:"🫶", tag:"Comfort", title:"Hand on heart for 20 seconds", min:2, max:2,
+   lines:["Rest your hands on your chest and breathe slowly into them.","Then say one kind thing to yourself."],
+   intro:"Let your own hands do the comforting.",
+   steps:[["🫶 Hand on your heart","Place one or both hands on your chest. Feel their warmth."],["🌬 Three slow breaths","Breathe slowly into your hands. Stay for about 20 seconds."],["💬 Something kind","Quietly say: “This is hard right now, and I'm here.”"]],
+   feels:["anxious","sad","lonely","selfcritical","stressed"], ev:EV.touch},
+  {id:"scan", kind:"steps", emoji:"🧘", tag:"Mindfulness", title:"A slow body scan", min:5, max:10,
+   lines:["Move your attention slowly from your head down to your feet.","You're not trying to change anything, just noticing."],
+   intro:"Take as long as you like on each part.",
+   steps:[["🙂 Face and jaw","Notice your forehead, eyes and jaw. Let them soften if they can."],["🙆 Neck and shoulders","Notice any tightness. Breathe towards it."],["🫁 Chest and belly","Feel them rise and fall with each breath."],["👐 Arms and hands","Notice their weight, warmth or tingling."],["🦶 Legs and feet","Feel where they touch the floor or the bed."]],
+   feels:["sleep","stressed","anxious","tired","overthinking"], ev:EV.mindful},
+  {id:"ground", kind:"steps", emoji:"🌼", tag:"Grounding", title:"Come back to right here: 5, 4, 3, 2, 1", min:2, max:5,
+   lines:["Notice five things you see, four you can touch, three you hear, two you smell and one you taste.","It pulls your attention out of your head and into the room."],
+   intro:"Let's come back to right here, one sense at a time.",
+   steps:[["👀 Notice 5 things you can see","Tap a light for each one you find.",5],["✋ Notice 4 things you can touch","Tap a light for each one.",4],["👂 Notice 3 sounds you can hear","Tap a light for each one.",3],["🌸 Notice 2 things you can smell","Tap a light for each one.",2],["🍵 Notice 1 thing you can taste","Or one kind thing about yourself.",1]],
+   feels:["anxious","overthinking","stressed","any"], ev:EV.mindful},
+  // movement
+  {id:"walk", kind:"timer", emoji:"🚶", tag:"Movement", title:"A {m}-minute walk, somewhere green if you can", min:10, max:10, walk:true,
+   lines:["The thought can come along, but it doesn't get to drive.","You're not solving anything. You're just noticing."],
+   intro:"Let's get out of your head for a little while.", head:"Your only job is to notice:", list:NOTICE_LIST, start:"Start my walk",
+   feels:["overthinking","heavy","sad","stressed","restless","any"], ev:EV.nature},
+  {id:"brisk", kind:"timer", emoji:"🚶", tag:"Movement", title:"A brisk {m}-minute walk", min:5, max:10, walk:true,
+   lines:["Walk a little faster than usual. Swing your arms.","Look up, not at your phone."],
+   intro:"Let's give your body something to do.", head:"Along the way:", list:[["🚶","Walk a little faster than usual"],["👀","Look up, not at your phone"],["🙆","Stop halfway and stretch"],["🌬","Notice your breath settling"]], start:"Start my walk",
+   feels:["heavy","restless","tired","procrastinating","stressed"], ev:EV.exercise},
+  {id:"song", kind:"timer", emoji:"🎵", tag:"Movement", title:"A one-song movement break", min:4, max:4,
+   lines:["Put on one song you like and move however feels good.","When the song ends, so does the break."],
+   intro:"One song. That's all.", head:"While it plays:", list:[["🎵","Put on one song you like"],["💃","Move however feels good"],["🙆","Stretch through the last chorus"],["🌬","End with one long breath out"]], start:"Start my song",
+   feels:["restless","heavy","stressed","tired","sad"], ev:EV.exercise},
+  {id:"shake", kind:"timer", emoji:"👐", tag:"Movement", title:"Shake it out for two minutes", min:2, max:2,
+   lines:["Roll your shoulders. Shake out your hands.","Give the fizzy feeling somewhere to go."],
+   intro:"Let's give that energy somewhere to go.", head:"Move through these, any order:", list:MOVE_LIST, start:"Start 2 minutes",
+   feels:["restless","tired","heavy","procrastinating"], ev:EV.exercise},
+  {id:"stretch", kind:"timer", emoji:"🧘", tag:"Gentle yoga", title:"{m} minutes of slow stretching", min:5, max:10,
+   lines:["Slow, gentle stretches. Nothing should hurt.","Breathe out as you move into each stretch."],
+   intro:"Slow and gentle. Nothing should hurt.", head:"Move through these slowly:", list:[["🙆","Reach both arms up and lean to each side"],["🙇","Fold forward slowly and let your head hang"],["🐈","On hands and knees, arch and round your back"],["🌬","Finish lying down with three slow breaths"]], start:"Start stretching",
+   feels:["stressed","heavy","restless","tired","sleep"], ev:EV.yoga},
+  // writing and thinking tools
+  {id:"once", kind:"write", emoji:"✍️", tag:"Writing", title:"Write the thought down, just once", min:2, max:2, mode:"ask",
+   lines:["Exactly as it sounds in your head. No fixing it.","Then we'll ask it one small question, and turn it into a step if there is one."],
+   intro:"Let's leave the thought somewhere other than your head.", prompt:"What's looping in your mind right now?", hint:"Write it once, exactly as it sounds.",
+   feels:["overthinking","anxious","stressed","any"], ev:EV.intent},
+  {id:"dump", kind:"write", emoji:"✍️", tag:"Writing", title:"A {m}-minute brain dump", min:5, max:10, mode:"plain", timed:true,
+   lines:["Tip everything that's on your mind onto the page.","Messy is fine. Nobody else will read it."],
+   intro:"Let's get it out of your head and onto the page.", prompt:"What's on your mind?", hint:"Keep going until your head feels a little emptier.",
+   reply:"It's on the page now, not just in your head.",
+   feels:["overthinking","stressed","sad","heavy","any"], ev:EV.writing},
+  {id:"postpone", kind:"write", emoji:"⏰", tag:"Worry time", title:"Park the worry until later", min:2, max:5, mode:"follow",
+   lines:["Write the worry down, then pick a time later today to give it 15 minutes.","Until then, when it pops up, you can tell it: “Not now. Later.”"],
+   intro:"You don't have to deal with this right now.", prompt:"What's the worry?", hint:"Just a sentence or two.",
+   followLabel:"When will you give it 15 minutes later today?", followPh:"e.g. 6:30 pm, after dinner",
+   reply:"Let's give it a proper time slot instead of all day.",
+   feels:["overthinking","anxious","sleep"], ev:EV.postpone},
+  {id:"todo", kind:"write", emoji:"📝", tag:"Writing", title:"Write tomorrow's to-do list", min:5, max:5, mode:"plain", hours:[20,4],
+   lines:["List everything you need to do tomorrow, as specifically as you can.","Your mind can stop holding it once it's on paper."],
+   intro:"Let's put tomorrow somewhere other than your head.", prompt:"What do you need to do tomorrow?", hint:"Be specific: “email Riya about the deck” beats “work stuff”.",
+   reply:"It's all written down. Tomorrow can wait until tomorrow.",
+   feels:["sleep","overthinking","stressed"], ev:EV.todo},
+  {id:"label", kind:"write", emoji:"🏷", tag:"Name it", title:"Name what you're feeling", min:2, max:2, mode:"plain",
+   lines:["Find a few words for the feeling, like “dread” or “tired and tense”.","Naming a feeling helps your brain turn the alarm down."],
+   intro:"Let's give the feeling a name.", prompt:"Start with “I'm noticing…”", hint:"A few words is enough: “I'm noticing dread, and some tiredness.”",
+   reply:"Thank you for naming it. Feelings get a little smaller when they have a name.",
+   feels:["anxious","angry","sad","overthinking","stressed","any"], ev:EV.label},
+  {id:"distance", kind:"write", emoji:"💬", tag:"Self-talk", title:"Talk to yourself like a friend would", min:2, max:5, mode:"plain",
+   lines:["Write to yourself using your own name, or “you”.","It's a small trick that helps you see things from a calmer distance."],
+   intro:"Let's look at this from one step back.", prompt:"“____, here's what's going on…”", hint:"Use your own name, or “you”, instead of “I”.",
+   reply:"That's the calmer voice. It was yours all along.",
+   feels:["anxious","overthinking","selfcritical","angry","stressed"], ev:EV.distance},
+  {id:"friend", kind:"write", emoji:"💌", tag:"Self-compassion", title:"Write what you'd tell a friend", min:5, max:10, mode:"plain",
+   lines:["Imagine a close friend felt exactly like you do now.","Write what you'd say to them, then read it back as if it's for you."],
+   intro:"You deserve the kindness you'd give a friend.", prompt:"What would you say to a close friend who felt exactly like this?", hint:"Then read it back slowly. It's for you too.",
+   reply:"Read it once more. Every word of that is for you too.",
+   feels:["selfcritical","sad","heavy","overthinking"], ev:EV.compassion},
+  {id:"break", kind:"steps", emoji:"🤍", tag:"Self-compassion", title:"A self-compassion break", min:2, max:2,
+   lines:["Three short sentences, said slowly to yourself.","It sounds simple. It's one of the best-studied kindness practices there is."],
+   intro:"Say each one slowly, out loud or in your head.",
+   steps:[["“This is a hard moment.”","Naming it is enough. You don't need to fix it."],["“Other people feel this too.”","You're not the only one. This is part of being human."],["“May I be kind to myself.”","Hand on heart if you like. What do you need right now?"]],
+   feels:["selfcritical","sad","anxious","lonely"], ev:EV.compassion},
+  {id:"good3", kind:"write", emoji:"🌼", tag:"Gratitude", title:"Three good things", min:5, max:5, mode:"plain", hours:[16,4],
+   lines:["Write down three things that went well today, however small.","For each one, add a few words on why it happened."],
+   intro:"Let's look for the small good bits.", prompt:"What were three good things today, and why did they happen?", hint:"Tiny counts: good chai, a kind text, finishing one task.",
+   reply:"Three small lights. They were there all along.",
+   feels:["heavy","sad","selfcritical","lonely"], ev:EV.gratitude},
+  {id:"tiny", kind:"write", emoji:"🪜", tag:"Getting started", title:"Find a two-minute way in", min:2, max:5, mode:"follow",
+   lines:["Name the thing you're avoiding.","Then shrink the first step until it takes two minutes. That's all you have to do."],
+   intro:"We'll find the smallest possible way in.", prompt:"What's the thing you're avoiding?", hint:"Just name it.",
+   followLabel:"What's a first step so small it takes two minutes?", followPh:"e.g. open the doc and write the title",
+   reply:"Now make it tiny. Just the very first action.",
+   feels:["procrastinating","stressed","heavy","overthinking"], ev:EV.intent},
+  // connection and comfort
+  {id:"reach", kind:"steps", emoji:"📱", tag:"Connection", title:"Send one small message", min:2, max:5,
+   lines:["Think of one person who'd be glad to hear from you.","Send something tiny. “Thought of you today” is enough."],
+   intro:"One message. No need to explain anything.",
+   steps:[["💭 Think of one person","Someone who'd be glad to hear from you."],["✍️ Send something small","“Thought of you today” is enough. You don't have to explain how you feel."],["🌱 That's it","You don't need to wait for a reply."]],
+   feels:["lonely","sad","heavy"], ev:EV.reachout},
+  {id:"music", kind:"timer", emoji:"🎧", tag:"Music", title:"{m} minutes of calm music", min:4, max:10,
+   lines:["Pick music that feels calm to you and just listen.","Nothing else to do. Let it fill the room."],
+   intro:"Let the music do the work.", head:"While it plays:", list:[["🎵","Pick calm music you love"],["🎧","Headphones on if you can"],["😌","Close your eyes or look out of a window"],["🌬","Let your breathing slow to the music"]], start:"Start listening",
+   feels:["stressed","anxious","sad","heavy","lonely","angry","any"], ev:EV.music},
+  {id:"goodthing", kind:"timer", emoji:"☕", tag:"Small good thing", title:"Do one small good thing", min:5, max:10,
+   lines:["Pick one small thing you usually enjoy, and do just that.","You don't have to feel like it first. The feeling often follows."],
+   intro:"You don't have to feel like it first.", head:"Pick one, then do just that:", list:[["☕","Make your favourite drink, slowly"],["🪴","Water a plant or tidy one small surface"],["📖","Read two pages of something you enjoy"],["🌇","Step outside and look at the sky"]], start:"Start",
+   feels:["heavy","sad","tired","procrastinating","lonely"], ev:EV.activation},
+  {id:"water", kind:"timer", emoji:"💧", tag:"Body reset", title:"A tiny reset for your body", min:2, max:2,
+   lines:["Drink some water. Open a window.","Splash your face. Unclench your jaw.","Even one of these counts."],
+   intro:"Let's start with your body. It's smaller than your thoughts.", head:"Pick any of these. Even one counts:", list:[["💧","Drink a glass of water"],["🪟","Open a window"],["🫧","Splash your face"],["😌","Unclench your jaw"]], start:"Start 2 minutes",
+   feels:["heavy","tired","stressed","any"], ev:EV.water},
+  {id:"green", kind:"timer", emoji:"🪴", tag:"Micro-break", title:"Rest your eyes on something green", min:2, max:2,
+   lines:["Find a window, a plant, or even a photo of nature.","Just look at it for a minute or two."],
+   intro:"Give your mind a short rest.", head:"Just look:", list:[["🪟","Find a window, a plant or a nature photo"],["👀","Let your eyes rest on it"],["🌿","Spot three different shades of green"],["🌬","Breathe slowly while you look"]], start:"Start 2 minutes",
+   feels:["overthinking","stressed","tired","any"], ev:EV.green},
+  {id:"kind", kind:"steps", emoji:"🎁", tag:"Kindness", title:"Do one small kind thing", min:5, max:5,
+   lines:["Do something small and kind for someone else.","It helps them, and it quietly helps you too."],
+   intro:"Small is perfect.",
+   steps:[["💭 Think of someone","A friend, family member, classmate or even a stranger."],["🎁 Do one small kind thing","Send a compliment, share something useful, or offer to help."],["🌱 Notice how it feels","No need to make it big."]],
+   feels:["sad","lonely","heavy"], ev:EV.kindness},
+  {id:"getup", kind:"steps", emoji:"🌙", tag:"Sleep", title:"Get up for a little while", min:5, max:10, hours:[21,5],
+   lines:["If you've been lying awake a while, get out of bed for a bit.","Do something quiet in dim light, and go back when you feel sleepy."],
+   intro:"Lying there trying harder rarely works. Let's reset.",
+   steps:[["🛏 Get up for a bit","If you've been awake for a while, get out of bed."],["🕯 Something quiet, in dim light","Read something gentle. Try to skip the phone."],["😴 Go back when sleepy","Return to bed only once your eyes feel heavy."]],
+   feels:["sleep","tired","overthinking"], ev:EV.insomnia}
+];
+const KIND_SCREEN = {breath:"pond", timer:"meadow", write:"tree", steps:"clearing"};
+
+/* reading feelings typed in the user's own words */
+const CRISIS = /suicid|kill (my ?self|me)|end (my life|it all)|want to die|wanna die|don'?t want to (live|be here|exist)|no reason to live|better off dead|self[- ]?harm|hurt(ing)? myself|cut(ting)? myself|overdose|take my (own )?life/i;
+const FEEL_RX = {
+  overthinking:/overthink|thinking too much|can'?t stop thinking|keep thinking|racing thoughts|ruminat|spiral|loop|what if|mind (won'?t|wont) stop/i,
+  anxious:/anxi|nervous|panic|worr|scared|afraid|fear|on edge|tense|heart (is )?racing|jitter|uneasy|exam|interview|presentation/i,
+  heavy:/heavy|\blow\b|down|empty|numb|unmotivated|hopeless|flat|\bmeh\b|drained|pointless|blah/i,
+  restless:/restless|can'?t sit|fidget|antsy|bored|can'?t focus|distracted|wired|hyper|can'?t concentrate/i,
+  stressed:/stress|overwhelm|too much|pressure|deadline|burn ?out|burnt out|swamped|tension|so much to do/i,
+  sad:/\bsad|cry|crying|upset|heartbr|grief|griev|miss (him|her|them|home)|break ?up|lost (my|someone)|hurt\b/i,
+  lonely:/lonely|alone|isolated|no ?one|nobody|left out|disconnected|no friends/i,
+  angry:/angry|anger|\bmad\b|furious|irritat|annoy|frustrat|rage|pissed|fed up/i,
+  tired:/tired|exhausted|sleepy|fatigue|no energy|worn out/i,
+  sleep:/can'?t sleep|insomnia|awake|sleepless|not sleeping|keep waking/i,
+  selfcritical:/hate myself|not good enough|failure|stupid|useless|worthless|guilt|ashamed|shame|embarrass|compar|loser|i'?m (so )?bad/i,
+  procrastinating:/procrastinat|can'?t start|putting (it )?off|avoid|stuck|behind on|lazy|can'?t get started/i
 };
-let rec = null;
+function readFeelings(text){
+  const out = [];
+  for(const k in FEEL_RX) if(FEEL_RX[k].test(text)) out.push(k);
+  return out;
+}
+function fill(str, m){ return String(str).replace(/\{m\}/g, m); }
+function buildRec(item, t){
+  const dur = Math.max(item.min, Math.min(item.max, t));
+  return Object.assign({}, item, {dur, minutes:dur, title:fill(item.title, dur), lines:item.lines.map(l => fill(l, dur))});
+}
+function pickRec(feels, t, exclude){
+  const hour = new Date().getHours(), learn = S.learn || {}, recent = S.recent || [];
+  const want = feels.length ? feels : ["any"];
+  const scored = LIB.filter(it => it.min <= t && !exclude.includes(it.id)).map(it => {
+    const hits = it.feels.filter(f => want.includes(f)).length;
+    let sc = hits * 3 + (it.feels.includes("any") ? .6 : 0);
+    if(hits === 0 && !it.feels.includes("any")) sc -= 6;
+    if(want.includes("angry") && !it.feels.includes("angry") && (it.kind === "timer" && it.list === MOVE_LIST || it.walk)) sc -= 4;
+    sc += it.max >= t ? 1.2 : .3;
+    if(it.hours){ const [a,b] = it.hours, inH = a < b ? (hour >= a && hour < b) : (hour >= a || hour < b); sc += inH ? 1.5 : -3.5; }
+    sc += Math.max(-3, Math.min(3, learn[it.id] || 0)) * .8;
+    const ri = recent.lastIndexOf(it.id);
+    if(ri >= 0){ const ago = recent.length - ri; sc -= ago <= 2 ? 6 : ago <= 5 ? 3 : 1; }
+    sc += Math.random() * 1.6;
+    return [sc, it];
+  }).sort((a,b) => b[0] - a[0]);
+  return scored.length ? buildRec(scored[0][1], t) : null;
+}
+let rec = null, feels = [], shownIds = [];
 
 /* ---------- world decoration ---------- */
 function rng(seed){ return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
@@ -1078,7 +1325,7 @@ function decorate(){
     el("circle",{class:"fcore",r:2.6,fill:"#FFE885",style:`animation-delay:-${(r()*3).toFixed(1)}s`}, inner);
   }
   makeVine("#vinePath","#vineLeaves");
-  makeVine("#campVine","#campLeaves");
+
 }
 
 /* flowers in the bed */
@@ -1122,7 +1369,7 @@ const POS = {
   welcome:[70,43,240], emotion:[15,19,120], time:[15,19,120], thinking:[50,42,200], reveal:[23,45,200],
   pond:[50,40,120], meadow:[76,32,140], tree:[84,34,110], clearing:[50,19,110], campfire:[76,50,115],
   checkin:[50,15,105], reward:[50,50,120], home:[71,33,200], mygarden:[78,30,150], journal:[86,26,110],
-  paywall:[50,11,95], checkout:[91,12,90], processing:[50,42,200], success:[76,15,100]
+  paywall:[50,11,95], checkout:[91,12,90], processing:[50,42,200], success:[76,15,100], crisis:[50,7,80]
 };
 const POS_MOBILE = {thinking:[50,40,160], processing:[50,40,160], pond:[50,40,110], reward:[50,50,100], welcome:[70,24,160]};
 function setLumi(x, y, s, instant){
@@ -1144,58 +1391,17 @@ function later(fn, ms){ const t = setTimeout(fn, reduced ? Math.min(ms, 400) : m
 function every(fn, ms){ const t = setInterval(fn, ms); timers.push(["i",t]); return t; }
 function clearAll(){ timers.forEach(([k,t]) => k === "t" ? clearTimeout(t) : clearInterval(t)); timers = []; }
 
-/* ---------- campfire sound (generated, no files) ---------- */
-let audio = null;
-function startFireSound(){
-  if(!S.sound || audio) return;
-  try{
-    const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
-    const ctx = new AC(), master = ctx.createGain(), t0 = ctx.currentTime;
-    master.gain.setValueAtTime(0, t0); master.gain.linearRampToValueAtTime(.9, t0 + 2.5); master.connect(ctx.destination);
-    const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
-    let last = 0; for(let i=0;i<len;i++){ const w = Math.random()*2-1; last = (last + .02*w) / 1.02; d[i] = last * 3.5; }
-    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 520;
-    const ng = ctx.createGain(); ng.gain.value = .32;
-    src.connect(lp); lp.connect(ng); ng.connect(master); src.start();
-    const pg = ctx.createGain(); pg.gain.value = .03; pg.connect(master);
-    [220, 277.18, 329.63, 440].forEach((f,i) => { const o = ctx.createOscillator(); o.type = "sine"; o.frequency.value = f; const g = ctx.createGain(); g.gain.value = i === 3 ? .4 : 1; o.connect(g); g.connect(pg); o.start(); });
-    const lfo = ctx.createOscillator(); lfo.frequency.value = .08; const lg = ctx.createGain(); lg.gain.value = .018; lfo.connect(lg); lg.connect(pg.gain); lfo.start();
-    audio = {ctx, master, crackT:null};
-    const crackle = () => {
-      if(!audio || audio.ctx !== ctx) return;
-      const n = ctx.createBufferSource(), b = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .03), ctx.sampleRate), cd = b.getChannelData(0);
-      for(let i=0;i<cd.length;i++) cd[i] = (Math.random()*2-1) * Math.pow(1 - i/cd.length, 4);
-      n.buffer = b;
-      const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1500 + Math.random()*2500;
-      const g = ctx.createGain(); g.gain.value = .06 + Math.random()*.16;
-      n.connect(hp); hp.connect(g); g.connect(master); n.start();
-      audio.crackT = setTimeout(crackle, 70 + Math.random() * (Math.random() < .25 ? 80 : 650));
-    };
-    crackle();
-  }catch(e){ audio = null; }
-}
-function stopFireSound(){
-  if(!audio) return;
-  const a = audio; audio = null; clearTimeout(a.crackT);
-  try{
-    const t = a.ctx.currentTime;
-    a.master.gain.cancelScheduledValues(t); a.master.gain.setValueAtTime(a.master.gain.value, t); a.master.gain.linearRampToValueAtTime(0, t + .8);
-    setTimeout(() => a.ctx.close().catch(()=>{}), 950);
-  }catch(e){}
-}
-function soundLabel(){ $("#soundToggle").textContent = S.sound ? "🔊 Fire sounds on" : "🔈 Fire sounds off"; }
 
 /* ---------- router ---------- */
 const SCENES = {welcome:"garden", emotion:"garden", time:"garden", thinking:"garden dim", reveal:"garden dim soft",
-  pond:"garden pond", meadow:"garden meadow", tree:"garden tree", clearing:"garden clearing", campfire:"garden campfire soft",
-  checkin:"garden", reward:"garden bed", home:"garden bed", mygarden:"garden bed", journal:"garden tree",
-  paywall:"garden", checkout:"garden", processing:"garden dim", success:"garden bed"};
-const FLOW = new Set(["emotion","time","thinking","reveal","pond","meadow","tree","clearing","campfire","checkin","reward","paywall","checkout","processing","success"]);
+  pond:"garden soft", meadow:"garden", tree:"garden", clearing:"garden",
+  checkin:"garden", reward:"garden bed", home:"garden bed", mygarden:"garden bed", journal:"garden",
+  paywall:"garden", checkout:"garden", processing:"garden dim", success:"garden bed", crisis:"garden"};
+const FLOW = new Set(["emotion","time","thinking","reveal","pond","meadow","tree","clearing","checkin","reward","paywall","checkout","processing","success","crisis"]);
 let current = null;
 
 function go(name){
-  clearAll(); stopFireSound();
+  clearAll();
   const beam = $("#beam"); beam.classList.remove("on","settle");
   $("#sparks").innerHTML = "";
   lumi.classList.remove("lit","wander","breathing","warm");
@@ -1224,22 +1430,26 @@ function refreshQuiet(){
 }
 
 function startFlow(){ if(gated()) return openPaywall("gate"); go("emotion"); }
-function startSpace(space){
+function startItem(id, t){
   if(gated()) return openPaywall("gate");
-  S.emotion = null; S.time = null; rec = DEFAULTS[space]; go(space);
+  const item = LIB.find(x => x.id === id);
+  feels = []; S.time = t || Math.max(item.min, 5);
+  rec = buildRec(item, S.time); shownIds = [rec.id];
+  go(KIND_SCREEN[rec.kind]);
 }
-function finishActivity(kind){ S.lastActivity = kind; save(); go("checkin"); }
+function finishActivity(){ S.lastActivity = rec ? rec.id : null; save(); go("checkin"); }
 
 /* ---------- screens ---------- */
-let pick = {emotion:null, time:null, check:null};
+let pick = {emotion:null, time:null, check:null, typed:false};
+function feelReady(){ $("#toTime").disabled = !pick.emotion && $("#feelText").value.trim().length < 3; }
 function setRadio(group, attr, val){ $$(group + " .choice").forEach(c => c.setAttribute("aria-checked", c.dataset[attr] === val ? "true" : "false")); }
 function fmt(sec){ const m = Math.floor(sec/60), s = Math.floor(sec%60); return `${m}:${String(s).padStart(2,"0")}`; }
 function fmtDate(d){ return new Date(d).toLocaleDateString(undefined,{day:"numeric", month:"long", year:"numeric"}); }
 
 const ENTER = {
   welcome(){},
-  emotion(){ pick.emotion = null; setRadio("#s-emotion","emotion",null); $("#toTime").disabled = true; },
-  time(){ pick.time = null; setRadio("#s-time","time",null); $("#toThink").disabled = true; $("#ack").textContent = ACK[S.emotion] || "Okay. I'm with you."; },
+  emotion(){ pick.emotion = null; setRadio("#s-emotion","emotion",null); $("#feelText").value = ""; $("#toTime").disabled = true; },
+  time(){ pick.time = null; setRadio("#s-time","time",null); $("#toThink").disabled = true; $("#ack").textContent = pick.typed ? ACK.any : (ACK[feels[0]] || ACK.any); },
   thinking(){
     later(() => lumi.classList.add("lit"), 500);
     sparkle(10, 42);
@@ -1247,22 +1457,21 @@ const ENTER = {
   },
   reveal(){
     lumi.classList.add("lit");
-    rec = RECS[S.emotion][S.time];
-    $("#recSpace").textContent = "Lumi's taking you to " + SPACE[rec.space];
-    $("#recTitle").textContent = rec.title;
-    $("#recBody").innerHTML = rec.lines.map(l => `<p>${l}</p>`).join("");
-    $("#recTime").textContent = "About " + S.time + " minutes";
+    shownIds = [];
+    rec = pickRec(feels, S.time, shownIds);
+    shownIds.push(rec.id);
+    renderRec();
     const card = $("#recCard"); card.classList.add("veiled");
     $("#revealActions").classList.add("hide");
     later(showBeam, 1400);
     later(() => { card.classList.remove("veiled"); $("#revealActions").classList.remove("hide"); }, 2200);
     later(() => $("#beam").classList.add("settle"), 3600);
   },
-  pond(){ startPond(); },
-  meadow(){ setupTimed("meadow"); },
-  campfire(){ setupTimed("campfire"); soundLabel(); },
-  tree(){ setupTree(); },
-  clearing(){ setupClearing(); },
+  pond(){ $("#tagB").textContent = `${rec.emoji} ${rec.tag}`; startPond(); },
+  meadow(){ $("#tagT").textContent = `${rec.emoji} ${rec.tag}`; setupTimed("meadow"); },
+  tree(){ $("#tagW").textContent = `${rec.emoji} ${rec.tag}`; setupTree(); },
+  clearing(){ $("#tagS").textContent = `${rec.emoji} ${rec.tag}`; setupClearing(); },
+  crisis(){},
   checkin(){ pick.check = null; setRadio("#s-checkin","check",null); $("#checkReply").textContent = ""; $("#checkContinue").disabled = true; },
   reward(){
     $("#rewardGrew").textContent = S.resets === 1 ? "Your very first flower. Your garden grew a little." : "Your garden grew a little.";
@@ -1275,7 +1484,7 @@ const ENTER = {
     const n = S.flowers.length;
     $("#homeGreet").textContent = n > 0 ? "Welcome back." : "Welcome to Lumi's garden.";
     let meta = n > 0 ? `${n} ${n === 1 ? "flower" : "flowers"} growing in your garden.` : "Your first flower is waiting to bloom.";
-    if(!S.premium){
+    if(!planActive()){
       const left = Math.max(0, FREE - S.resets);
       meta += left > 0 ? ` ${left} of ${FREE} free sessions left.` : " Your free sessions are used up. Your garden and journal stay yours.";
     }
@@ -1314,6 +1523,32 @@ function sparkle(count, topPct){
   }
 }
 
+function renderRec(){
+  $("#recSpace").textContent = `${rec.emoji} ${rec.tag}`;
+  $("#recTitle").textContent = rec.title;
+  $("#recBody").innerHTML = rec.lines.map(l => `<p>${l}</p>`).join("");
+  $("#recTime").textContent = `About ${rec.dur} ${rec.dur === 1 ? "minute" : "minutes"}`;
+  $("#evLevel").textContent = rec.ev.lv + " evidence";
+  $("#evLevel").dataset.lv = rec.ev.lv;
+  $("#evText").textContent = rec.ev.text;
+  $("#evCite").textContent = rec.ev.cite + ".";
+  $("#evLink").href = SCHOLAR(rec.ev.q);
+  const words = feels.filter(f => FEEL_WORDS[f]).map(f => FEEL_WORDS[f]);
+  const who = words.length ? (words.length > 1 ? words.slice(0,-1).join(", ") + " and " + words.slice(-1) : words[0]) : "what you told her";
+  $("#recWhy").textContent = `Lumi picked this for ${who}, with ${S.time} minutes to spare.`;
+}
+function anotherRec(){
+  const next = pickRec(feels, S.time, shownIds);
+  const card = $("#recCard");
+  if(!next || shownIds.length >= 4){
+    $("#anotherRec").disabled = true;
+    $("#anotherRec").textContent = "That's my best for now";
+    return;
+  }
+  card.classList.add("veiled");
+  setTimeout(() => { rec = next; shownIds.push(rec.id); renderRec(); card.classList.remove("veiled"); perk(); }, 450);
+}
+
 /* reveal beam */
 function showBeam(){
   const beam = $("#beam"), card = $("#recCard").getBoundingClientRect();
@@ -1335,7 +1570,9 @@ function flyToFlower(target){
 
 /* pond */
 function startPond(){
-  const total = rec.breaths || 5, ring = $("#breathRing");
+  const ring = $("#breathRing"), phases = rec.phases;
+  const cycleLen = phases.reduce((a, p) => a + p[1], 0);
+  const total = Math.max(4, Math.round(rec.dur * 60 / cycleLen));
   lumi.classList.add("lit","breathing");
   $("#pondCue").textContent = rec.cue || "Put both feet on the floor.";
   $("#phaseWord").textContent = "Settle in";
@@ -1351,7 +1588,7 @@ function startPond(){
     ring.style.transitionDuration = secs + "s";
     ring.style.transform = `translate(-50%,-50%) scale(${sc})`;
     lumiGlow.style.transition = `opacity 1s ease, transform ${secs}s ease-in-out`;
-    lumiGlow.style.transform = `translate(-50%,-50%) scale(${sc === 1 ? 1.3 : .75})`;
+    lumiGlow.style.transform = `translate(-50%,-50%) scale(${sc >= .85 ? 1.3 : .75})`;
   };
   const phase = (word, secs, sc, next) => {
     $("#phaseWord").textContent = word;
@@ -1363,41 +1600,30 @@ function startPond(){
       else { clearInterval(iv); next(); }
     }, 1000);
   };
+  const runPhase = i => {
+    if(i >= phases.length) return cycle();
+    const [w, secs, sc] = phases[i];
+    phase(w, secs, sc, () => runPhase(i + 1));
+  };
   const cycle = () => {
     n++;
     if(n > total) return finish();
     $("#breathProgress").textContent = `Breath ${n} of ${total}`;
-    phase("Breathe in", 4, 1, () => phase("Hold", 2, null, () => phase("Breathe out", 6, .55, cycle)));
+    runPhase(0);
   };
   const finish = () => {
     $("#phaseCount").textContent = "";
-    if(rec.grounding){
-      $("#phaseWord").textContent = "Now find five things you can see.";
-      $("#breathProgress").textContent = "Tap a light for each one";
-      const dots = $("#groundDots"); dots.innerHTML = "";
-      for(let i=0;i<5;i++){
-        const b = document.createElement("button"); b.className = "dot"; b.setAttribute("aria-label", `Thing ${i+1} I can see`);
-        b.addEventListener("click", () => {
-          b.classList.toggle("on");
-          if($$("#groundDots .dot.on").length === 5){ $("#phaseWord").textContent = "You're here. That's enough for now."; $("#pondDone").className = "btn primary"; perk(); }
-        });
-        dots.appendChild(b);
-      }
-      $("#grounding").hidden = false;
-    } else {
-      $("#phaseWord").textContent = `That's ${total === 5 ? "five" : total}. Nicely done.`;
-      $("#breathProgress").hidden = true;
-      $("#pondDone").className = "btn primary";
-      perk();
-    }
+    $("#phaseWord").textContent = `That's ${total} breaths. Nicely done.`;
+    $("#breathProgress").hidden = true;
+    $("#pondDone").className = "btn primary";
+    perk();
   };
   later(cycle, 2400);
 }
 
 /* timed activities: meadow and campfire */
 const TIMED = {
-  meadow:{p:"meadow", time:"#meadowTime", cap:"#meadowCap", vine:"#vinePath", leaves:"#vineLeaves", start:"#meadowStart", done:"#meadowDone", doneLabel:"I'm back", head:"Your only job is to notice:", startLabel:"Start my walk", runCap:"left. Lumi's coming with you.", wander:true},
-  campfire:{p:"camp", time:"#campTime", cap:"#campCap", vine:"#campVine", leaves:"#campLeaves", start:"#campStart", done:"#campDone", doneLabel:"I'm done", head:"While the fire crackles:", startLabel:"Sit by the fire", runCap:"left by the fire.", sound:true}
+  meadow:{p:"meadow", time:"#meadowTime", cap:"#meadowCap", vine:"#vinePath", leaves:"#vineLeaves", start:"#meadowStart", done:"#meadowDone", doneLabel:"I'm done", head:"While you do it:", startLabel:"Start the timer", runCap:"left. Lumi's right here with you."}
 };
 function setupTimed(kind){
   const T = TIMED[kind], total = rec.minutes * 60;
@@ -1405,7 +1631,7 @@ function setupTimed(kind){
   $(`#${T.p}Title`).textContent = rec.title;
   $(`#${T.p}Head`).textContent = rec.head || T.head;
   const ul = $(`#${T.p}List`); ul.innerHTML = "";
-  LISTS[rec.list].forEach(([em, tx]) => {
+  rec.list.forEach(([em, tx]) => {
     const li = document.createElement("li"), b = document.createElement("button");
     b.setAttribute("aria-pressed","false");
     b.innerHTML = `<span class="em">${em}</span><span class="tx"></span>`;
@@ -1419,15 +1645,13 @@ function setupTimed(kind){
   $$(T.leaves + " .lf").forEach(l => l.classList.remove("on"));
   const start = $(T.start);
   start.hidden = false; start.textContent = rec.start || T.startLabel;
-  const done = $(T.done); done.hidden = true; done.className = "btn ghost"; done.textContent = T.doneLabel;
-  if(kind === "campfire") lumi.classList.add("warm");
+  const done = $(T.done); done.hidden = true; done.className = "btn ghost"; done.textContent = rec.walk ? "I'm back" : T.doneLabel;
 }
 function runTimed(kind){
   const T = TIMED[kind], total = rec.minutes * 60, end = Date.now() + total * 1000;
   $(T.start).hidden = true; $(T.done).hidden = false;
   $(T.cap).textContent = T.runCap;
-  lumi.classList.add("lit"); if(T.wander) lumi.classList.add("wander");
-  if(T.sound) startFireSound();
+  lumi.classList.add("lit"); if(rec.walk) lumi.classList.add("wander");
   const vp = $(T.vine), len = +vp.dataset.len;
   const tick = () => {
     const left = Math.max(0, (end - Date.now()) / 1000), p = 1 - left / total;
@@ -1445,21 +1669,24 @@ function runTimed(kind){
   $(T.done).focus({preventScroll:true});
 }
 
-/* clearing: 5-4-3-2-1 */
-const GROUND = [[5,"things you can see","👀"],[4,"things you can touch","✋"],[3,"sounds you can hear","👂"],[2,"things you can smell","🌸"],[1,"thing you can taste, or one kind thing about yourself","🍵"]];
+/* guided steps */
 function setupClearing(){
   let step = 0;
+  const steps = rec.steps;
   lumi.classList.add("lit");
+  $("#stepsIntro").textContent = rec.intro ? `"${rec.intro}"` : "";
   $("#clDone").className = "btn ghost";
   $("#clStep").hidden = false; $("#clSub").hidden = false;
   const render = () => {
-    const [n, txt, em] = GROUND[step];
-    $("#clStep").textContent = `Step ${step + 1} of 5`;
-    $("#clHead").textContent = `${em} Notice ${n} ${txt}`;
-    $("#clSub").textContent = n === 1 ? "Tap the light when you've found it." : "Tap a light for each one you find.";
+    const [h, sub, n] = steps[step];
+    $("#clStep").textContent = `Step ${step + 1} of ${steps.length}`;
+    $("#clHead").textContent = h;
+    $("#clSub").textContent = sub;
     const dots = $("#clDots"); dots.innerHTML = "";
-    for(let i=0;i<n;i++){
-      const b = document.createElement("button"); b.className = "dot"; b.setAttribute("aria-label", `${txt}, ${i+1} of ${n}`);
+    $("#clNext").hidden = !!n;
+    $("#clNext").textContent = step === steps.length - 1 ? "Finish →" : "Next →";
+    for(let i=0;i<(n||0);i++){
+      const b = document.createElement("button"); b.className = "dot"; b.setAttribute("aria-label", `${h}, ${i+1} of ${n}`);
       b.addEventListener("click", () => {
         b.classList.toggle("on");
         if($$("#clDots .dot.on").length === n){ perk(); later(next, 800); }
@@ -1469,14 +1696,16 @@ function setupClearing(){
   };
   const next = () => {
     step++;
-    if(step >= GROUND.length){
-      $("#clStep").hidden = true; $("#clSub").hidden = true; $("#clDots").innerHTML = "";
-      $("#clHead").textContent = "You're right here. That's enough for now.";
+    if(step >= steps.length){
+      $("#clStep").hidden = true; $("#clSub").hidden = true; $("#clDots").innerHTML = ""; $("#clNext").hidden = true;
+      $("#clHead").textContent = "You did it. That's enough for now.";
       $("#clDone").className = "btn primary";
+      perk();
       return;
     }
     render();
   };
+  $("#clNext").onclick = next;
   render();
 }
 
@@ -1486,16 +1715,19 @@ function setupTree(){
   jCan = null;
   $("#journalCard").classList.remove("closing");
   showStep("#jStep1");
-  $("#jHint").textContent = rec.hint || "Write it once, exactly as it sounds.";
+  $("#writeIntro").textContent = rec.intro ? `"${rec.intro}"` : "";
+  $("#jPrompt").textContent = rec.prompt || "What's on your mind?";
+  $("#jHint").textContent = rec.hint || "";
   $("#jText").value = ""; $("#jStepInput").value = ""; $("#jLeave").disabled = true;
   $("#jTimer").textContent = "";
   lumi.classList.add("warm");
-  if(rec.mode === "dump"){
-    const total = (rec.minutes || 5) * 60;
+  const enable = () => { $("#jLeave").disabled = $("#jText").value.trim().length < 2; };
+  if(rec.timed){
+    const total = (rec.dur || 5) * 60;
     let started = null;
     $("#jTimer").textContent = `${fmt(total)} of quiet writing`;
     $("#jText").oninput = () => {
-      $("#jLeave").disabled = $("#jText").value.trim().length < 2;
+      enable();
       if(!started){
         started = Date.now();
         every(() => {
@@ -1505,7 +1737,7 @@ function setupTree(){
       }
     };
   } else {
-    $("#jText").oninput = () => { $("#jLeave").disabled = $("#jText").value.trim().length < 2; };
+    $("#jText").oninput = enable;
   }
 }
 function showStep(id){
@@ -1517,9 +1749,9 @@ function renderJournal(){
   const box = $("#entries"); box.innerHTML = "";
   if(!S.journal.length){
     const p = document.createElement("div"); p.className = "panel";
-    p.innerHTML = `<p class="lumi-line" style="margin-bottom:14px">Nothing here yet.</p><p class="sub" style="margin-bottom:18px">When you write in the Treehouse, your pages are kept here.</p>`;
-    const b = document.createElement("button"); b.className = "btn primary"; b.textContent = "Open the Treehouse →";
-    b.addEventListener("click", () => startSpace("tree"));
+    p.innerHTML = `<p class="lumi-line" style="margin-bottom:14px">Nothing here yet.</p><p class="sub" style="margin-bottom:18px">Whenever Lumi suggests writing something down, your pages are kept here.</p>`;
+    const b = document.createElement("button"); b.className = "btn primary"; b.textContent = "Write with Lumi →";
+    b.addEventListener("click", () => startItem("dump", 5));
     p.appendChild(b); box.appendChild(p); return;
   }
   [...S.journal].reverse().forEach(e => {
@@ -1534,7 +1766,8 @@ function renderJournal(){
     t.textContent = new Date(e.date).toLocaleString(undefined,{weekday:"long", day:"numeric", month:"long", hour:"numeric", minute:"2-digit"});
     const x = document.createElement("p"); x.className = "etext"; x.textContent = e.text;
     const o = document.createElement("p"); o.className = "eout";
-    o.textContent = e.canAct ? (e.step ? `First step: ${e.step}` : "You decided you could do something about it.") : "You left it here. It didn't need solving right then.";
+    if(e.mode && e.mode !== "ask") o.textContent = e.step ? `${e.label || "Next step"} ${e.step}` : (e.title ? `Written with Lumi: ${e.title}` : "Written with Lumi");
+    else o.textContent = e.canAct ? (e.step ? `First step: ${e.step}` : "You decided you could do something about it.") : "You left it here. It didn't need solving right then.";
     d.append(del, t, x, o); box.appendChild(d);
   });
 }
@@ -1552,9 +1785,9 @@ function openPaywall(kind){
   card.innerHTML = `
     <h2 tabindex="-1">Keep Lumi with you ✨</h2>
     <p class="lede"></p>
-    <ul><li>Unlimited access to Lumi's Garden</li><li>All five spaces, any time</li><li>Your journal and flowers, kept safe</li></ul>
+    <ul><li>Unlimited sessions with Lumi</li><li>Fresh, research-backed steps every time</li><li>Your journal and flowers, kept safe</li></ul>
     <p class="price">₹249<span> / year</span></p>
-    <p class="whisper">About ₹21 a month.</p>
+    <p class="whisper">One payment for a full year. About ₹21 a month, and nothing renews automatically.</p>
     <div class="actions" style="justify-content:center"><button class="btn primary" id="payKeep">Keep Lumi →</button><button class="btn text" id="payLater">Maybe later</button></div>
     <p class="fine">Your garden and journal stay yours either way.</p>`;
   card.querySelector(".lede").textContent = lede;
@@ -1574,6 +1807,9 @@ function setMethod(m){
 function setupCheckout(){
   const renew = new Date(); renew.setFullYear(renew.getFullYear() + 1);
   $("#coRenew").textContent = fmtDate(renew);
+  const live = !!LUMI_CONFIG.razorpayPaymentUrl;
+  $("#payForm").hidden = live; $("#rzpPanel").hidden = !live;
+  $("#rzpIdErr").textContent = ""; $("#rzpId").value = "";
   $$("#payForm .err").forEach(e => e.textContent = "");
   $$("#payForm input").forEach(i => i.removeAttribute("aria-invalid"));
   setMethod(method);
@@ -1628,21 +1864,46 @@ function pay(){
   const paidWith = method === "upi" ? `UPI (${$("#pUpi").value.trim()})`
     : method === "card" ? `${cardBrand(num) || "Card"} ending ${num.slice(-4)}`
     : `Net banking (${$("#pBank").value})`;
-  const now = new Date(), renew = new Date(now); renew.setFullYear(now.getFullYear() + 1);
-  const order = "LUMI-" + Date.now().toString(36).toUpperCase().slice(-7);
   go("processing");
   later(() => {
-    S.premium = true;
-    S.plan = {name:"Lumi Garden", amount:PRICE, since:now.toISOString(), renews:renew.toISOString(), autoRenew:true, paidWith, order};
-    save();
+    activatePlan(paidWith);
     $("#pCard").value = ""; $("#pCvv").value = ""; $("#pExp").value = "";
     renderReceipt();
     go("success");
   }, 2600);
 }
+function activatePlan(paidWith, order){
+  const now = new Date(), renew = new Date(now); renew.setFullYear(now.getFullYear() + 1);
+  S.premium = true;
+  S.plan = {name:"Lumi Garden", amount:PRICE, since:now.toISOString(), renews:renew.toISOString(), autoRenew:false, paidWith,
+    order: order || ("LUMI-" + Date.now().toString(36).toUpperCase().slice(-7))};
+  S.pendingPay = null;
+  save();
+}
+function goRazorpay(){
+  S.pendingPay = {from:payFrom, at:Date.now()}; save();
+  location.href = LUMI_CONFIG.razorpayPaymentUrl;
+}
+function confirmManual(){
+  const id = $("#rzpId").value.trim();
+  if(!/^pay_[A-Za-z0-9]{14}$/.test(id)){ $("#rzpIdErr").textContent = "That doesn't look like a Razorpay payment ID. It starts with pay_ and is on your receipt email."; return; }
+  payFrom = (S.pendingPay && S.pendingPay.from) || payFrom;
+  activatePlan("Razorpay", id);
+  renderReceipt(); go("success");
+}
+function checkReturnFromPayment(){
+  const q = new URLSearchParams(location.search);
+  const pid = q.get("razorpay_payment_id");
+  if(!pid && q.get("paid") !== "1") return false;
+  payFrom = (S.pendingPay && S.pendingPay.from) || "after";
+  activatePlan("Razorpay", pid || null);
+  history.replaceState(null, "", location.pathname);
+  renderReceipt();
+  return true;
+}
 function renderReceipt(){
   const P = S.plan, box = $("#receipt"); box.innerHTML = "";
-  [["Plan", "Lumi Garden, yearly"],["Amount paid", `₹${P.amount}.00`],["Paid with", P.paidWith],["Order", P.order],["Date", fmtDate(P.since)],["Renews on", fmtDate(P.renews)]].forEach(([k,v]) => {
+  [["Plan", "Lumi Garden, one year"],["Amount paid", `₹${P.amount}.00`],["Paid with", P.paidWith],["Reference", P.order],["Date", fmtDate(P.since)],["Access until", fmtDate(P.renews)]].forEach(([k,v]) => {
     const r = document.createElement("div"); r.className = "r";
     const a = document.createElement("span"); a.textContent = k; const b = document.createElement("b"); b.textContent = v;
     r.append(a,b); box.appendChild(r);
@@ -1662,10 +1923,10 @@ function renderReceipt(){
 function openProfile(){
   const dlg = $("#profile"), P = S.plan;
   const rows = [
-    ["Plan", S.premium ? "Lumi Garden, ₹249/year" : `Free, ${Math.max(0, FREE - S.resets)} of ${FREE} sessions left`]
+    ["Plan", planActive() ? "Lumi Garden, one year" : `Free, ${Math.max(0, FREE - S.resets)} of ${FREE} sessions left`]
   ];
-  if(S.premium && P){
-    rows.push([P.autoRenew ? "Renews on" : "Active until", fmtDate(P.renews)]);
+  if(planActive() && P){
+    rows.push(["Active until", fmtDate(P.renews)]);
     rows.push(["Paid with", P.paidWith]);
   }
   rows.push(["Small resets", S.resets], ["Flowers", S.flowers.length], ["Journal pages", S.journal.length], ["Your data", syncLabel]);
@@ -1674,9 +1935,7 @@ function openProfile(){
 
   const acts = $("#profActions"); acts.innerHTML = "";
   const mk = (label, cls, fn) => { const b = document.createElement("button"); b.className = "btn " + cls; b.textContent = label; b.addEventListener("click", fn); acts.appendChild(b); return b; };
-  if(!S.premium) mk("Get Lumi Garden →", "primary", () => { dlg.close(); openPaywall("upgrade"); });
-  else if(P) mk(P.autoRenew ? "Turn off auto-renew" : "Turn auto-renew back on", "ghost", () => { P.autoRenew = !P.autoRenew; save(); openProfile(); });
-  mk(S.sound ? "🔊 Campfire sounds: on" : "🔈 Campfire sounds: off", "ghost", () => { S.sound = !S.sound; save(); openProfile(); });
+  if(!planActive()) mk("Get Lumi Garden →", "primary", () => { dlg.close(); openPaywall("upgrade"); });
 
   $("#resetBtn").textContent = "Start fresh"; $("#resetBtn").dataset.armed = "";
   if(!dlg.open) dlg.showModal();
@@ -1688,15 +1947,32 @@ function wire(){
   $$(".links button").forEach(b => b.addEventListener("click", () => go(b.dataset.nav)));
   $("#startBtn").addEventListener("click", () => { S.onboarded = true; save(); go("emotion"); });
   $$("[data-talk]").forEach(b => b.addEventListener("click", startFlow));
-  $$("[data-space]").forEach(b => b.addEventListener("click", () => startSpace(b.dataset.space)));
 
   $$("#s-emotion .choice").forEach(c => {
     c.addEventListener("mouseenter", () => { lumi.classList.add("warm"); perk(); });
     c.addEventListener("mouseleave", () => lumi.classList.remove("warm"));
-    c.addEventListener("click", () => { pick.emotion = c.dataset.emotion; setRadio("#s-emotion","emotion",pick.emotion); $("#toTime").disabled = false; perk(); });
+    c.addEventListener("click", () => {
+      pick.emotion = pick.emotion === c.dataset.emotion ? null : c.dataset.emotion;
+      setRadio("#s-emotion","emotion",pick.emotion); feelReady(); perk();
+    });
   });
+  $("#feelText").addEventListener("input", feelReady);
   $("#emotionBack").addEventListener("click", () => go(S.onboarded ? "home" : "welcome"));
-  $("#toTime").addEventListener("click", () => { S.emotion = pick.emotion; save(); go("time"); });
+  $("#toTime").addEventListener("click", () => {
+    const text = $("#feelText").value.trim();
+    pick.typed = text.length >= 3;
+    if(pick.typed && CRISIS.test(text)){ go("crisis"); return; }
+    feels = [];
+    if(pick.emotion) feels.push(pick.emotion);
+    if(pick.typed) readFeelings(text).forEach(f => { if(!feels.includes(f)) feels.push(f); });
+    S.emotion = feels[0] || "any"; save();
+    go("time");
+  });
+  $("#crisisContinue").addEventListener("click", () => {
+    feels = readFeelings($("#feelText").value).filter(f => f !== "selfcritical");
+    pick.typed = true; S.emotion = feels[0] || "any";
+    go("time");
+  });
 
   $$("#s-time .choice").forEach(c => {
     c.addEventListener("mouseenter", () => lumi.classList.add("warm"));
@@ -1706,24 +1982,28 @@ function wire(){
   $("#timeBack").addEventListener("click", () => go("emotion"));
   $("#toThink").addEventListener("click", () => { S.time = +pick.time; save(); go("thinking"); });
 
-  $("#startAct").addEventListener("click", () => go(rec.space));
+  $("#startAct").addEventListener("click", () => go(KIND_SCREEN[rec.kind]));
+  $("#anotherRec").addEventListener("click", anotherRec);
   $("#changeAnswers").addEventListener("click", () => go("emotion"));
 
-  $("#pondDone").addEventListener("click", () => finishActivity("pond"));
+  $("#pondDone").addEventListener("click", finishActivity);
   $("#meadowStart").addEventListener("click", () => runTimed("meadow"));
-  $("#meadowDone").addEventListener("click", () => finishActivity("meadow"));
-  $("#campStart").addEventListener("click", () => runTimed("campfire"));
-  $("#campDone").addEventListener("click", () => finishActivity("campfire"));
-  $("#soundToggle").addEventListener("click", () => {
-    S.sound = !S.sound; save(); soundLabel();
-    if(!S.sound) stopFireSound(); else if(!$("#campDone").hidden) startFireSound();
-  });
-  $("#clDone").addEventListener("click", () => finishActivity("clearing"));
+  $("#meadowDone").addEventListener("click", finishActivity);
+  $("#clDone").addEventListener("click", finishActivity);
 
   $("#jLeave").addEventListener("click", () => {
-    $("#jEcho").textContent = $("#jText").value.trim();
-    showStep("#jStep2"); perk();
-    $("#jQ").focus({preventScroll:true});
+    perk();
+    if(rec.mode === "ask"){
+      $("#jEcho").textContent = $("#jText").value.trim();
+      showStep("#jStep2"); $("#jQ").focus({preventScroll:true});
+    } else if(rec.mode === "follow"){
+      $("#jReply").textContent = rec.reply || "";
+      $("#jYesLabel").textContent = rec.followLabel; $("#jStepInput").placeholder = rec.followPh || "";
+      $("#jYesBox").hidden = false; showStep("#jStep3"); $("#jStepInput").focus();
+    } else {
+      $("#jReply").textContent = rec.reply || "It's on the page now, not just in your head.";
+      $("#jYesBox").hidden = true; showStep("#jStep3"); $("#jReply").focus({preventScroll:true});
+    }
   });
   $("#jNo").addEventListener("click", () => {
     jCan = false;
@@ -1733,11 +2013,13 @@ function wire(){
   $("#jYes").addEventListener("click", () => {
     jCan = true;
     $("#jReply").textContent = "Then let's make it tiny. Just the very first step.";
+    $("#jYesLabel").textContent = "What's the very first step?"; $("#jStepInput").placeholder = "Something small, like 'send one message'";
     $("#jYesBox").hidden = false; showStep("#jStep3"); $("#jStepInput").focus();
   });
   $("#jClose").addEventListener("click", () => {
-    S.journal.push({date:new Date().toISOString(), text:$("#jText").value.trim(), canAct:!!jCan, step:$("#jStepInput").value.trim(), emotion:S.emotion});
-    S.lastActivity = "tree"; save();
+    S.journal.push({date:new Date().toISOString(), text:$("#jText").value.trim(), canAct:!!jCan, step:$("#jStepInput").value.trim(),
+      mode:rec.mode, title:rec.title, label:rec.mode === "follow" ? rec.followLabel : "", emotion:S.emotion});
+    S.lastActivity = rec.id; save();
     $("#journalCard").classList.add("closing");
     lumi.classList.add("lit");
     later(() => go("checkin"), 650);
@@ -1752,11 +2034,16 @@ function wire(){
   }));
   $("#checkContinue").addEventListener("click", () => {
     S.lastCheckin = pick.check; S.resets += 1;
+    if(rec){
+      S.learn = S.learn || {}; S.recent = S.recent || [];
+      S.learn[rec.id] = (S.learn[rec.id] || 0) + ({much:2, little:1, same:-1}[pick.check] || 0);
+      S.recent.push(rec.id); S.recent = S.recent.slice(-10);
+    }
     S.flowers.push({c:S.flowers.length % PETALS.length, t:new Date().toISOString(), a:S.lastActivity});
     save(); go("reward");
   });
   $("#rewardBack").addEventListener("click", () => {
-    if(S.resets === FREE && !S.premium) openPaywall("after");
+    if(S.resets === FREE && !planActive()) openPaywall("after");
     else go("home");
   });
 
@@ -1776,6 +2063,9 @@ function wire(){
   $("#pCvv").addEventListener("input", e => { e.target.value = e.target.value.replace(/\D/g,"").slice(0,4); });
   ["pName","pEmail","pUpi","pCard","pExp","pCvv","pBank"].forEach(id => $("#" + id).addEventListener("input", () => fieldErr(id, "")));
   $("#payForm").addEventListener("submit", e => { e.preventDefault(); pay(); });
+  $("#rzpGo").addEventListener("click", goRazorpay);
+  $("#rzpConfirm").addEventListener("click", confirmManual);
+  $("#rzpId").addEventListener("input", () => { $("#rzpIdErr").textContent = ""; });
 
   // profile
   const dlg = $("#profile");
@@ -1794,14 +2084,16 @@ function wire(){
     else if(current === "reward") flyToFlower($("#flowers .blooming .head g"));
     else if(current) placeFor(current);
   });
-  addEventListener("pagehide", stopFireSound);
 }
 
 /* ---------- boot ---------- */
 load(); sizeK(); decorate(); renderFlowers(false); wire();
 setLumi(112, 8, 240, true);
 document.body.dataset.scene = "garden";
-setTimeout(() => go(S.onboarded ? "home" : "welcome"), 250);
+setTimeout(() => {
+  if(checkReturnFromPayment()) go("success");
+  else go(S.onboarded ? "home" : "welcome");
+}, 250);
 connectCloud();
 })();
 </script>
