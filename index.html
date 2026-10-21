@@ -887,7 +887,8 @@ dialog .note{font-size:14px;margin:16px 0 20px}
       <h3 style="font-size:28px">Pay securely with Razorpay</h3>
       <p class="sub">UPI, cards, net banking and wallets. You'll pay on Razorpay's secure page, then come straight back to Lumi.</p>
       <button class="btn primary paybtn" id="rzpGo" type="button">Pay ₹249 with Razorpay →</button>
-      <details class="paid-manual">
+      <p class="sub" id="paymentNotice">Payment is not live yet. We are testing the five-free-activities experience first.</p>
+      <details class="paid-manual" hidden>
         <summary>Already paid but Lumi didn't unlock?</summary>
         <div class="field"><label for="rzpId">Your Razorpay payment ID (from the receipt email)</label><input id="rzpId" placeholder="pay_XXXXXXXXXXXXXX" autocomplete="off"><span class="err" id="rzpIdErr"></span></div>
         <button class="btn ghost" id="rzpConfirm" type="button">Unlock Lumi</button>
@@ -1808,7 +1809,12 @@ function setupCheckout(){
   const renew = new Date(); renew.setFullYear(renew.getFullYear() + 1);
   $("#coRenew").textContent = fmtDate(renew);
   const live = !!LUMI_CONFIG.razorpayPaymentUrl;
-  $("#payForm").hidden = live; $("#rzpPanel").hidden = !live;
+  // Never display the old simulated payment form: it cannot process or verify real payments.
+  $("#payForm").hidden = true; $("#rzpPanel").hidden = false;
+  $("#rzpGo").disabled = !live;
+  $("#paymentNotice").textContent = live
+    ? "Payment collection is available, but automatic premium activation is not yet configured. Please do not pay until access fulfilment is ready."
+    : "Payment is not live yet. We are testing the five-free-activities experience first.";
   $("#rzpIdErr").textContent = ""; $("#rzpId").value = "";
   $$("#payForm .err").forEach(e => e.textContent = "");
   $$("#payForm input").forEach(i => i.removeAttribute("aria-invalid"));
@@ -1881,25 +1887,18 @@ function activatePlan(paidWith, order){
   save();
 }
 function goRazorpay(){
+  if(!LUMI_CONFIG.razorpayPaymentUrl) return;
   S.pendingPay = {from:payFrom, at:Date.now()}; save();
   location.href = LUMI_CONFIG.razorpayPaymentUrl;
 }
 function confirmManual(){
-  const id = $("#rzpId").value.trim();
-  if(!/^pay_[A-Za-z0-9]{14}$/.test(id)){ $("#rzpIdErr").textContent = "That doesn't look like a Razorpay payment ID. It starts with pay_ and is on your receipt email."; return; }
-  payFrom = (S.pendingPay && S.pendingPay.from) || payFrom;
-  activatePlan("Razorpay", id);
-  renderReceipt(); go("success");
+  // A payment ID is not proof of payment. Never unlock from user-entered text.
+  $("#rzpIdErr").textContent = "Premium access requires verified payment confirmation.";
 }
 function checkReturnFromPayment(){
-  const q = new URLSearchParams(location.search);
-  const pid = q.get("razorpay_payment_id");
-  if(!pid && q.get("paid") !== "1") return false;
-  payFrom = (S.pendingPay && S.pendingPay.from) || "after";
-  activatePlan("Razorpay", pid || null);
-  history.replaceState(null, "", location.pathname);
-  renderReceipt();
-  return true;
+  // Query parameters (including ?paid=1 and payment IDs) are not proof of payment.
+  // Do not grant premium access based on a redirect.
+  return false;
 }
 function renderReceipt(){
   const P = S.plan, box = $("#receipt"); box.innerHTML = "";
@@ -2033,7 +2032,12 @@ function wire(){
     lumi.classList.add("warm"); perk();
   }));
   $("#checkContinue").addEventListener("click", () => {
-    S.lastCheckin = pick.check; S.resets += 1;
+    S.lastCheckin = pick.check;
+    // A use is counted only when the activity and final check-in are completed.
+    // Prevent accidental double counting when this handler fires twice.
+    if($("#checkContinue").disabled) return;
+    $("#checkContinue").disabled = true;
+    S.resets += 1;
     if(rec){
       S.learn = S.learn || {}; S.recent = S.recent || [];
       S.learn[rec.id] = (S.learn[rec.id] || 0) + ({much:2, little:1, same:-1}[pick.check] || 0);
@@ -2043,7 +2047,7 @@ function wire(){
     save(); go("reward");
   });
   $("#rewardBack").addEventListener("click", () => {
-    if(S.resets === FREE && !planActive()) openPaywall("after");
+    if(S.resets >= FREE && !planActive()) openPaywall("after");
     else go("home");
   });
 
