@@ -885,9 +885,9 @@ dialog .note{font-size:14px;margin:16px 0 20px}
     </form>
     <div class="panel payform" id="rzpPanel" hidden>
       <h3 style="font-size:28px">Pay securely with Razorpay</h3>
-      <p class="sub">UPI, cards, net banking and wallets. You'll pay on Razorpay's secure page, then come straight back to Lumi.</p>
+      <p class="sub">Pay ₹249 securely on Razorpay. Premium will be activated manually within 24 hours of verified payment. Use your Lumi login email when paying.</p>
       <button class="btn primary paybtn" id="rzpGo" type="button">Pay ₹249 with Razorpay →</button>
-      <p class="sub" id="paymentNotice">Payment is not live yet. We are testing the five-free-activities experience first.</p>
+      <p class="sub" id="paymentNotice">Premium is activated manually within 24 hours of verified payment. Use the same email for Lumi and Razorpay.</p>
       <details class="paid-manual" hidden>
         <summary>Already paid but Lumi didn't unlock?</summary>
         <div class="field"><label for="rzpId">Your Razorpay payment ID (from the receipt email)</label><input id="rzpId" placeholder="pay_XXXXXXXXXXXXXX" autocomplete="off"><span class="err" id="rzpIdErr"></span></div>
@@ -899,6 +899,11 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 </section>
 
 <!-- (Razorpay panel is inside the checkout grid) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<dialog id="premiumLogin" style="border:0;border-radius:20px;max-width:420px;width:90%;padding:28px;background:#fffaf0;color:#123c32;box-shadow:0 15px 60px #0005">
+<h2>Keep Lumi with you 🌷</h2><p>Sign in by email to buy Premium or restore an existing purchase. Your first five activities don't require an account.</p>
+<form id="premiumLoginForm"><label for="premiumEmail">Email</label><input id="premiumEmail" type="email" required autocomplete="email" placeholder="you@example.com" style="display:block;width:100%;padding:12px;margin:10px 0;border-radius:10px;border:1px solid #aaa"><button class="btn primary" type="submit">Email me a sign-in link</button><button class="btn text" id="premiumLoginCancel" type="button">Not now</button></form><p id="premiumLoginStatus" role="status"></p></dialog>
 <!-- processing -->
 <section class="screen" id="s-processing" hidden>
   <p class="thinking-line" tabindex="-1">Lighting the way to your garden…</p>
@@ -945,7 +950,10 @@ dialog .note{font-size:14px;margin:16px 0 20px}
 /* ============ SETTINGS: edit these two lines ============ */
 const LUMI_CONFIG = {
   clarityId: "",            // Microsoft Clarity project ID, e.g. "abc123xyz9"
-  razorpayPaymentUrl: ""    // Razorpay Payment Page link, e.g. "https://pages.razorpay.com/meetlumi"
+  supabaseUrl: "https://lxhdorgmcgemcqldqsfs.supabase.co",
+  supabasePublishableKey: "sb_publishable_e4Wp-bxWlOI2jLw9rG4OpQ_MyZek9tw",
+  razorpayKeyId: "", // unused in manual launch
+  razorpayPaymentPage: "https://rzp.io/rzp/KOsirk0f"
 };
 /* ======================================================== */
 if(LUMI_CONFIG.clarityId){
@@ -1015,7 +1023,36 @@ async function connectCloud(){
     }
   }catch(e){ cloud = null; }
 }
-function planActive(){ return !!S.premium && !(S.plan && S.plan.renews && Date.now() > Date.parse(S.plan.renews)); }
+let premiumUntil = null;
+const sb = window.supabase?.createClient(LUMI_CONFIG.supabaseUrl,LUMI_CONFIG.supabasePublishableKey) || null;
+let premiumUser = null;
+function planActive(){ return !!premiumUser && !!premiumUntil && Date.parse(premiumUntil) > Date.now(); }
+async function syncPremium(){
+  if(!sb) return;
+  const {data:{user},error} = await sb.auth.getUser();
+  if(error || !user){ premiumUser=null; premiumUntil=null; refreshQuiet(); return; }
+  premiumUser=user;
+  const {data, error:dbError}=await sb.from('lumi_accounts').select('premium_until').eq('user_id',user.id).single();
+  if(dbError) throw dbError;
+  premiumUntil=data?.premium_until || null;
+  refreshQuiet();
+}
+function requestPremiumLogin(message){
+  const dialog=$('#premiumLogin');
+  $('#premiumLoginStatus').textContent=message||'';
+  if(!dialog.open) dialog.showModal();
+}
+async function startPremiumCheckout(){
+  if(!sb){ $('#paymentNotice').textContent='Email sign-in is unavailable. Please contact support before paying.'; return; }
+  const {data:{user},error}=await sb.auth.getUser();
+  if(error || !user){ requestPremiumLogin('Sign in with the same email address you will use to pay. Then return here to continue.'); return; }
+  const url=LUMI_CONFIG.razorpayPaymentPage;
+  if(!/^https:\/\/(?:pages\.razorpay\.com|rzp\.io\/rzp)\//.test(url)){
+    $('#paymentNotice').textContent='Payment link is being configured. Please try again shortly.'; return;
+  }
+  window.location.assign(url);
+}
+
 const gated = () => lifetimeUses >= FREE && !planActive();
 
 /* ---------- content: research-backed steps ---------- */
@@ -1823,20 +1860,15 @@ function setMethod(m){
   $("#m-netbanking").hidden = m !== "netbanking";
 }
 function setupCheckout(){
-  const renew = new Date(); renew.setFullYear(renew.getFullYear() + 1);
-  $("#coRenew").textContent = fmtDate(renew);
-  const live = !!LUMI_CONFIG.razorpayPaymentUrl;
-  // Never display the old simulated payment form: it cannot process or verify real payments.
-  $("#payForm").hidden = true; $("#rzpPanel").hidden = false;
-  $("#rzpGo").disabled = !live;
-  $("#paymentNotice").textContent = live
-    ? "Payment collection is available, but automatic premium activation is not yet configured. Please do not pay until access fulfilment is ready."
-    : "Payment is not live yet. We are testing the five-free-activities experience first.";
-  $("#rzpIdErr").textContent = ""; $("#rzpId").value = "";
-  $$("#payForm .err").forEach(e => e.textContent = "");
-  $$("#payForm input").forEach(i => i.removeAttribute("aria-invalid"));
+  const renew=new Date(); renew.setFullYear(renew.getFullYear()+1);
+  $('#coRenew').textContent=fmtDate(renew);
+  $('#payForm').hidden=true; $('#rzpPanel').hidden=false;
+  $('#rzpGo').disabled=false;
+  $('#paymentNotice').textContent='Sign in with your email before paying. Use the same email on Razorpay. Premium is activated manually within 24 hours after payment verification. No automatic activation.';
+  $('#rzpIdErr').textContent=''; $('#rzpId').value='';
   setMethod(method);
 }
+
 function luhn(num){
   let sum = 0, alt = false;
   for(let i = num.length - 1; i >= 0; i--){
@@ -1879,35 +1911,10 @@ function validatePay(){
   return ok;
 }
 function pay(){
-  if(!validatePay()){
-    const first = $("#payForm [aria-invalid='true']"); if(first) first.focus();
-    return;
-  }
-  const num = $("#pCard").value.replace(/\D/g,"");
-  const paidWith = method === "upi" ? `UPI (${$("#pUpi").value.trim()})`
-    : method === "card" ? `${cardBrand(num) || "Card"} ending ${num.slice(-4)}`
-    : `Net banking (${$("#pBank").value})`;
-  go("processing");
-  later(() => {
-    activatePlan(paidWith);
-    $("#pCard").value = ""; $("#pCvv").value = ""; $("#pExp").value = "";
-    renderReceipt();
-    go("success");
-  }, 2600);
+  // Legacy simulated payment form is disabled. All payments use verified Razorpay checkout.
+  startPremiumCheckout();
 }
-function activatePlan(paidWith, order){
-  const now = new Date(), renew = new Date(now); renew.setFullYear(now.getFullYear() + 1);
-  S.premium = true;
-  S.plan = {name:"Lumi Garden", amount:PRICE, since:now.toISOString(), renews:renew.toISOString(), autoRenew:false, paidWith,
-    order: order || ("LUMI-" + Date.now().toString(36).toUpperCase().slice(-7))};
-  S.pendingPay = null;
-  save();
-}
-function goRazorpay(){
-  if(!LUMI_CONFIG.razorpayPaymentUrl) return;
-  S.pendingPay = {from:payFrom, at:Date.now()}; save();
-  location.href = LUMI_CONFIG.razorpayPaymentUrl;
-}
+function goRazorpay(){ startPremiumCheckout(); }
 function confirmManual(){
   // A payment ID is not proof of payment. Never unlock from user-entered text.
   $("#rzpIdErr").textContent = "Premium access requires verified payment confirmation.";
@@ -1941,16 +1948,15 @@ function openProfile(){
   const rows = [
     ["Plan", planActive() ? "Lumi Garden, one year" : `Free, ${Math.max(0, FREE - lifetimeUses)} of ${FREE} sessions left`]
   ];
-  if(planActive() && P){
-    rows.push(["Active until", fmtDate(P.renews)]);
-    rows.push(["Paid with", P.paidWith]);
-  }
+  if(planActive()) rows.push(["Active until", fmtDate(premiumUntil)]);
   rows.push(["Small resets", S.resets], ["Flowers", S.flowers.length], ["Journal pages", S.journal.length], ["Your data", syncLabel]);
   const box = $("#profRows"); box.innerHTML = "";
   rows.forEach(([k,v]) => { const d = document.createElement("div"); d.className = "row"; const a = document.createElement("span"); a.textContent = k; const b = document.createElement("b"); b.textContent = v; d.append(a,b); box.appendChild(d); });
 
   const acts = $("#profActions"); acts.innerHTML = "";
   const mk = (label, cls, fn) => { const b = document.createElement("button"); b.className = "btn " + cls; b.textContent = label; b.addEventListener("click", fn); acts.appendChild(b); return b; };
+  if(premiumUser) mk("Sign out", "text", async () => { await sb.auth.signOut(); premiumUser=null; premiumUntil=null; dlg.close(); refreshQuiet(); });
+  else mk("Sign in / Restore Premium", "text", () => { dlg.close(); requestPremiumLogin(); });
   if(!planActive()) mk("Get Lumi Garden →", "primary", () => { dlg.close(); openPaywall("upgrade"); });
 
   $("#resetBtn").textContent = "Start fresh"; $("#resetBtn").dataset.armed = "";
@@ -2086,6 +2092,19 @@ function wire(){
   ["pName","pEmail","pUpi","pCard","pExp","pCvv","pBank"].forEach(id => $("#" + id).addEventListener("input", () => fieldErr(id, "")));
   $("#payForm").addEventListener("submit", e => { e.preventDefault(); pay(); });
   $("#rzpGo").addEventListener("click", goRazorpay);
+  $("#premiumLoginCancel").addEventListener("click",()=>$("#premiumLogin").close());
+  $("#premiumLoginForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const email=$("#premiumEmail").value.trim();
+    $("#premiumLoginStatus").textContent="Sending your sign-in link…";
+    if(!sb){ $("#premiumLoginStatus").textContent="Login is temporarily unavailable."; return; }
+    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:'https://meetlumi.in/'}});
+    $("#premiumLoginStatus").textContent=error?error.message:'Check your email and open the link on this website. Then return to Premium.';
+  });
+  if(sb) sb.auth.onAuthStateChange((_event,session)=>{
+    if(session?.user){ $("#premiumLogin").close(); setTimeout(()=>syncPremium().catch(console.warn),0); }
+    else { premiumUser=null; premiumUntil=null; }
+  });
   $("#rzpConfirm").addEventListener("click", confirmManual);
   $("#rzpId").addEventListener("input", () => { $("#rzpIdErr").textContent = ""; });
 
@@ -2124,6 +2143,7 @@ setTimeout(() => {
   else go(S.onboarded ? "home" : "welcome");
 }, 250);
 connectCloud();
+setTimeout(()=>syncPremium().catch(console.warn),0);
 })();
 </script>
 </body>
