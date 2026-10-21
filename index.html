@@ -941,11 +941,32 @@ dialog .note{font-size:14px;margin:16px 0 20px}
   </div>
 </dialog>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+#lumiAuth{border:0;border-radius:22px;padding:26px;max-width:min(440px,92vw);width:100%;background:#FDF8E7;color:#103A31;box-shadow:0 18px 70px #0005;font-family:inherit}
+#lumiAuth::backdrop{background:rgba(10,36,30,.65)}
+#lumiAuth input{width:100%;padding:12px;border-radius:10px;border:1px solid #9bad93;margin:12px 0;font:inherit}
+#lumiAuth .auth-actions{display:flex;gap:10px;flex-wrap:wrap}
+#lumiAuth p{line-height:1.5}
+#lumiAuthStatus{font-size:14px;min-height:20px}
+</style>
+<dialog id="lumiAuth" aria-labelledby="lumiAuthTitle">
+  <h2 id="lumiAuthTitle">Your little corner of Lumi 🌷</h2>
+  <p>Sign in to keep your five free activities linked to your account, even when you switch devices.</p>
+  <form id="lumiAuthForm">
+    <label for="lumiAuthEmail">Email address</label>
+    <input id="lumiAuthEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+    <div class="auth-actions"><button class="btn primary" type="submit">Email me a sign-in link</button><button class="btn text" type="button" id="lumiAuthCancel">Not now</button></div>
+  </form>
+  <p id="lumiAuthStatus" role="status" aria-live="polite"></p>
+</dialog>
 <script>
 /* ============ SETTINGS: edit these two lines ============ */
 const LUMI_CONFIG = {
   clarityId: "",            // Microsoft Clarity project ID, e.g. "abc123xyz9"
-  razorpayPaymentUrl: ""    // Razorpay Payment Page link, e.g. "https://pages.razorpay.com/meetlumi"
+  razorpayPaymentUrl: "",   // Remains disabled until verified payment fulfillment is deployed
+  supabaseUrl: "https://lxhdorgmcgemcqldqsfs.supabase.co",
+  supabasePublishableKey: "sb_publishable_e4Wp-bxWlOI2jLw9rG4OpQ_MyZek9tw"
 };
 /* ======================================================== */
 if(LUMI_CONFIG.clarityId){
@@ -1015,8 +1036,47 @@ async function connectCloud(){
     }
   }catch(e){ cloud = null; }
 }
-function planActive(){ return !!S.premium && !(S.plan && S.plan.renews && Date.now() > Date.parse(S.plan.renews)); }
-const gated = () => lifetimeUses >= FREE && !planActive();
+// Server-owned entitlement. Browser-local flags never grant Premium.
+let sb = null, sbUser = null, accountReady = false, accountError = false, accountBusy = false;
+let serverPremiumUntil = null;
+try { if(window.supabase) sb = window.supabase.createClient(LUMI_CONFIG.supabaseUrl, LUMI_CONFIG.supabasePublishableKey); } catch(e){}
+function planActive(){ return !!serverPremiumUntil && Date.parse(serverPremiumUntil) > Date.now(); }
+const gated = () => !accountReady || (lifetimeUses >= FREE && !planActive());
+async function refreshAccount(){
+  if(!sb) throw Error("Account service unavailable. Please try again later.");
+  const {data:sessionData,error:authError} = await sb.auth.getUser();
+  if(authError) throw authError;
+  sbUser = sessionData.user;
+  if(!sbUser){ accountReady=false; serverPremiumUntil=null; return false; }
+  const {data,error} = await sb.from("lumi_accounts").select("free_uses,premium_until").eq("user_id",sbUser.id).single();
+  if(error) throw error;
+  lifetimeUses = data.free_uses;
+  serverPremiumUntil = data.premium_until;
+  accountReady=true; accountError=false;
+  refreshQuiet();
+  return true;
+}
+function showAuth(message){
+  const d = $("#lumiAuth");
+  $("#lumiAuthStatus").textContent = message || "";
+  if(!d.open) d.showModal();
+}
+async function ensureAccess(){
+  if(accountBusy) return false;
+  accountBusy = true;
+  try{
+    if(!await refreshAccount()) { showAuth(); return false; }
+    if(gated()) { openPaywall("gate"); return false; }
+    return true;
+  }catch(e){ accountError=true; showAuth("Unable to verify your account right now. Please try again. " + (e.message || "")); return false; }
+  finally{accountBusy=false;}
+}
+async function initAccount(){
+  if(!sb){ showAuth("Unable to load sign-in. Check your internet connection."); return; }
+  try{ if(!await refreshAccount()) showAuth(); }
+  catch(e){ showAuth("Could not check your account: " + (e.message || "Please try again.")); }
+}
+
 
 /* ---------- content: research-backed steps ---------- */
 // Every step cites published research. "lv" is an honest evidence level:
@@ -1447,9 +1507,9 @@ function refreshQuiet(){
   else renderFlowers(false);
 }
 
-function startFlow(){ if(gated()) return openPaywall("gate"); go("emotion"); }
-function startItem(id, t){
-  if(gated()) return openPaywall("gate");
+async function startFlow(){ if(!await ensureAccess()) return; go("emotion"); }
+async function startItem(id, t){
+  if(!await ensureAccess()) return;
   const item = LIB.find(x => x.id === id);
   feels = []; S.time = t || Math.max(item.min, 5);
   rec = buildRec(item, S.time); shownIds = [rec.id];
@@ -1941,10 +2001,8 @@ function openProfile(){
   const rows = [
     ["Plan", planActive() ? "Lumi Garden, one year" : `Free, ${Math.max(0, FREE - lifetimeUses)} of ${FREE} sessions left`]
   ];
-  if(planActive() && P){
-    rows.push(["Active until", fmtDate(P.renews)]);
-    rows.push(["Paid with", P.paidWith]);
-  }
+  if(planActive()) rows.push(["Active until", fmtDate(serverPremiumUntil)]);
+  if(sbUser) rows.push(["Signed in", sbUser.email || "Account"]);
   rows.push(["Small resets", S.resets], ["Flowers", S.flowers.length], ["Journal pages", S.journal.length], ["Your data", syncLabel]);
   const box = $("#profRows"); box.innerHTML = "";
   rows.forEach(([k,v]) => { const d = document.createElement("div"); d.className = "row"; const a = document.createElement("span"); a.textContent = k; const b = document.createElement("b"); b.textContent = v; d.append(a,b); box.appendChild(d); });
@@ -1952,6 +2010,7 @@ function openProfile(){
   const acts = $("#profActions"); acts.innerHTML = "";
   const mk = (label, cls, fn) => { const b = document.createElement("button"); b.className = "btn " + cls; b.textContent = label; b.addEventListener("click", fn); acts.appendChild(b); return b; };
   if(!planActive()) mk("Get Lumi Garden →", "primary", () => { dlg.close(); openPaywall("upgrade"); });
+  if(sbUser) mk("Sign out", "text", async () => { await sb.auth.signOut(); sbUser=null; accountReady=false; serverPremiumUntil=null; lifetimeUses=FREE; dlg.close(); showAuth("Signed out. Sign in to continue."); });
 
   $("#resetBtn").textContent = "Start fresh"; $("#resetBtn").dataset.armed = "";
   if(!dlg.open) dlg.showModal();
@@ -1959,9 +2018,21 @@ function openProfile(){
 
 /* ---------- wiring ---------- */
 function wire(){
+  $("#lumiAuthCancel").addEventListener("click", () => $("#lumiAuth").close());
+  $("#lumiAuthForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const email = $("#lumiAuthEmail").value.trim();
+    $("#lumiAuthStatus").textContent = "Sending your sign-in link…";
+    if(!sb){ $("#lumiAuthStatus").textContent = "Sign-in service unavailable."; return; }
+    const {error} = await sb.auth.signInWithOtp({email,options:{emailRedirectTo:"https://meetlumi.in/"}});
+    $("#lumiAuthStatus").textContent = error ? error.message : "Check your email for a sign-in link, then return to Lumi.";
+  });
+  if(sb) sb.auth.onAuthStateChange((_event,session) => {
+    if(session && session.user){ sbUser=session.user; $("#lumiAuth").close(); setTimeout(() => refreshAccount().catch(e => showAuth(e.message)),0); }
+  });
   $("#logo").addEventListener("click", () => go(S.onboarded ? "home" : "welcome"));
   $$(".links button").forEach(b => b.addEventListener("click", () => go(b.dataset.nav)));
-  $("#startBtn").addEventListener("click", () => { S.onboarded = true; save(); go("emotion"); });
+  $("#startBtn").addEventListener("click", async () => { if(!await ensureAccess()) return; S.onboarded = true; save(); go("emotion"); });
   $$("[data-talk]").forEach(b => b.addEventListener("click", startFlow));
 
   $$("#s-emotion .choice").forEach(c => {
@@ -2048,14 +2119,30 @@ function wire(){
     $("#checkContinue").disabled = false;
     lumi.classList.add("warm"); perk();
   }));
-  $("#checkContinue").addEventListener("click", () => {
+  $("#checkContinue").addEventListener("click", async () => {
     S.lastCheckin = pick.check;
     // A use is counted only when the activity and final check-in are completed.
     // Prevent accidental double counting when this handler fires twice.
     if($("#checkContinue").disabled) return;
     $("#checkContinue").disabled = true;
+    // Server transaction atomically checks and records a free completion.
+    try{
+      if(!sb || !sbUser) throw Error("Sign-in required");
+      const {data,error} = await sb.rpc("complete_lumi_activity");
+      if(error) throw error;
+      const result = Array.isArray(data) ? data[0] : data;
+      if(!result || !result.allowed){
+        await refreshAccount();
+        openPaywall("gate");
+        return;
+      }
+      await refreshAccount();
+    }catch(e){
+      $("#checkContinue").disabled = false;
+      showAuth("Couldn't save this activity to your account. Please try again. " + (e.message || ""));
+      return;
+    }
     S.resets += 1;
-    recordLifetimeUses(lifetimeUses + 1);
     if(rec){
       S.learn = S.learn || {}; S.recent = S.recent || [];
       S.learn[rec.id] = (S.learn[rec.id] || 0) + ({much:2, little:1, same:-1}[pick.check] || 0);
@@ -2084,7 +2171,7 @@ function wire(){
   });
   $("#pCvv").addEventListener("input", e => { e.target.value = e.target.value.replace(/\D/g,"").slice(0,4); });
   ["pName","pEmail","pUpi","pCard","pExp","pCvv","pBank"].forEach(id => $("#" + id).addEventListener("input", () => fieldErr(id, "")));
-  $("#payForm").addEventListener("submit", e => { e.preventDefault(); pay(); });
+  $("#payForm").addEventListener("submit", e => e.preventDefault());
   $("#rzpGo").addEventListener("click", goRazorpay);
   $("#rzpConfirm").addEventListener("click", confirmManual);
   $("#rzpId").addEventListener("input", () => { $("#rzpIdErr").textContent = ""; });
@@ -2123,7 +2210,8 @@ setTimeout(() => {
   if(checkReturnFromPayment()) go("success");
   else go(S.onboarded ? "home" : "welcome");
 }, 250);
-connectCloud();
+// Server-side account is the authority for free-use and premium entitlements.
+initAccount();
 })();
 </script>
 </body>
